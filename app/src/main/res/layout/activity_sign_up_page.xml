@@ -23,6 +23,7 @@
         android:layout_marginTop="50dp">
 
         <TextView
+            android:id="@+id/name_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -115,7 +116,7 @@
         android:layout_marginTop="75dp"
         android:background="@android:color/transparent"
         android:textColor="#FFF"
-        android:textSize="40dp"/>
+        android:textSize="30dp"/>
 
 
 </LinearLayout>
