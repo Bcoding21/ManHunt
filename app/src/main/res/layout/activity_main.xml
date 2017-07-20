@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/footprint3"
+    tools:context="com.brandon.manhunt.MainActivity"
+    android:weightSum="1">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="30dp"
+        android:text="ManHunt"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"/>
+
+
+    <Button
+        android:id="@+id/sign_in"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:text="@string/Sign_in"
+        android:layout_marginLeft="50dp"
+        android:layout_weight="0.05"
+        android:layout_gravity="left"
+        android:layout_marginTop="50dp"
+        android:background="@android:color/transparent"
+        android:textSize="20dp"/>
+
+    <Button
+        android:id="@+id/sign_up"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:text="@string/sign_up"
+        android:layout_marginLeft="50dp"
+        android:layout_weight="0.05"
+        android:layout_gravity="left"
+        android:layout_marginTop="50dp"
+        android:background="@android:color/transparent"
+        android:textSize="20dp"/>
+
+
+</LinearLayout>

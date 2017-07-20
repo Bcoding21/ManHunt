@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "482180913725",
+    "firebase_url": "https://manhunt-9c24d.firebaseio.com",
+    "project_id": "manhunt-9c24d",
+    "storage_bucket": "manhunt-9c24d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482180913725:android:492936748cff0576",
+        "android_client_info": {
+          "package_name": "com.brandon.manhunt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482180913725-9fhm5i4165vhlp5tadpaun4tcrs8t6to.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brandon.manhunt",
+            "certificate_hash": "c5aed35f636e6c8f6d283dee5b3504864b01d7e7"
+          }
+        },
+        {
+          "client_id": "482180913725-g1mi6t3h5u9su5jp6ouclm00a2npho37.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7U6SJEAB0FLO6ZeIoBYmm7Lb6qqCROS8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482180913725-g1mi6t3h5u9su5jp6ouclm00a2npho37.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
