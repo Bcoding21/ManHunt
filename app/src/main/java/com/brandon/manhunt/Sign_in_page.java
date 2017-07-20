@@ -18,7 +18,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import UserProfile.java;
 
 
 public class Sign_in_page extends AppCompatActivity implements View.OnClickListener{
@@ -26,9 +25,6 @@ public class Sign_in_page extends AppCompatActivity implements View.OnClickListe
     private EditText mEmailField, mPasswordField;
     private FirebaseAuth mAuth;
     private TextView mStatus;
-    private UserProfile
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

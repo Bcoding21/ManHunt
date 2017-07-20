@@ -1,6 +1,7 @@
 package com.brandon.manhunt;
 
 import android.app.ProgressDialog;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,14 +19,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Sign_up_page extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText mNameInput, mEmailInput, mUserNameInput, mPasswordInput;
+    private EditText mNameInput, mEmailInput, mPasswordInput;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private TextView mLogging;
-    private ProgressBar mProgress;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,11 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_sign_up_page);
         mNameInput = (EditText)findViewById(R.id.name_edit);
         mEmailInput = (EditText)findViewById(R.id.email_edit);
-        mUserNameInput = (EditText)findViewById(R.id.username_edit);
         mPasswordInput = (EditText)findViewById(R.id.password_edit);
         mLogging = (TextView) findViewById(R.id.name_view);
+        mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.login_button).setOnClickListener(this);
 
-        mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -52,8 +56,6 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
                 // ...
             }
     };
-
-
     }
 
     @Override
@@ -71,10 +73,15 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v){
-        createAccount(mEmailInput.getText().toString(), mPasswordInput.getText().toString());
+        String UserEmail = mEmailInput.getText().toString();
+        String UserPassword = mPasswordInput.getText().toString();
+        createAccount(UserEmail,UserPassword);
+        String UserDisplayName = mNameInput.getText().toString();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Profle");
+        myRef.setValue(new UserProfile(UserEmail, UserPassword,
+                UserDisplayName, "None"));
     }
-
-
 
     private void createAccount(String email, String password) {
 

@@ -36,32 +36,8 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:background="#FFF" />
+        </LinearLayout>
 
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/username"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColor="#FFF"/>
-
-        <EditText
-            android:id="@+id/username_edit"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:background="#FFF"/>
-
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
