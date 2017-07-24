@@ -15,6 +15,13 @@ public class UserProfile {
     private String mEmail, mPassword, mDisplayName, mUniqueID;
     private Map<String, String> mFriendList;
 
+    public UserProfile(){
+        mEmail = "None";
+        mPassword = "None";
+        mDisplayName = "None";
+        mUniqueID = "None";
+        mFriendList = new HashMap<String,String>();
+    }
 
     public UserProfile(String mEmail, String mPassword, String mDisplayName,
                        String mUniqueID) {

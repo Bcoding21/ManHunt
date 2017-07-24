@@ -1,5 +1,6 @@
 package com.brandon.manhunt;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,82 +26,92 @@ public class Sign_in_page extends AppCompatActivity implements View.OnClickListe
     private EditText mEmailField, mPasswordField;
     private FirebaseAuth mAuth;
     private TextView mStatus;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in_page);
 
-        //EditTexts
+        //EditTexts, TextView, ProgressDialog
         mEmailField = (EditText)findViewById(R.id.username_edit);
         mPasswordField = (EditText)findViewById(R.id.password_edit);
+        mEmailField.setText(R.string.example_email);
+        mPasswordField.setText(R.string.example_password);
+        mStatus = (TextView)findViewById(R.id.status_view);
+        progress = new ProgressDialog(this);
 
         //Buttons
         findViewById(R.id.login_button).setOnClickListener(this);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
-
-        //TextView
-        mStatus = (TextView)findViewById(R.id.status_view);
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d("TAG", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("TAG", "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
     }
+
+
 
     public void onClick(View v){
-        SignIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        signIn();
     }
 
-    private void SignIn(String email, String password) {
-        if (!validateForm()) {
-            return;
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+
+    private void signIn() {
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
+        progress.setMessage("Processing...");
+        progress.show();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Firebase", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            mStatus.setText("You are logged in with this email: " + user.getEmail());
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("Firebase", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(Sign_in_page.this, "Authentication failed.",
+                        Log.d("TAG", "signInWithEmail:onComplete:" + task.isSuccessful());
+                        if (!task.isSuccessful()) {
+                            progress.cancel();
+                            Log.w("TAG", "signInWithEmail:failed", task.getException());
+                            Toast.makeText(Sign_in_page.this, "Authentication Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
+                        else{
+                            progress.cancel();
+                            Toast.makeText(Sign_in_page.this, "Login Successful",
+                                    Toast.LENGTH_SHORT).show();
+
+                            startActivity(new Intent(Sign_in_page.this, base_page.class));
+                        }
+
+
+                        // ...
                     }
                 });
-    }
-
-
-        @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-    }
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String email = mEmailField.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            mEmailField.setError("Required.");
-            valid = false;
-        } else {
-            mEmailField.setError(null);
-        }
-
-        String password = mPasswordField.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            mPasswordField.setError("Required.");
-            valid = false;
-        } else {
-            mPasswordField.setError(null);
-        }
-
-        return valid;
     }
 
 }
