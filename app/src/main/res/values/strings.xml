@@ -27,4 +27,5 @@
         completions."
     </string>
     <string name="title_activity_base_page">base_page</string>
+    <string name="title_activity_sign_in">SignIn</string>
 </resources>
