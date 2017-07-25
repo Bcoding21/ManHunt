@@ -64,7 +64,6 @@ public class Sign_in_page extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     public void onClick(View v){
         signIn();
     }
@@ -105,11 +104,7 @@ public class Sign_in_page extends AppCompatActivity implements View.OnClickListe
                             Toast.makeText(Sign_in_page.this, "Login Successful",
                                     Toast.LENGTH_SHORT).show();
 
-                            startActivity(new Intent(Sign_in_page.this, base_page.class));
                         }
-
-
-                        // ...
                     }
                 });
     }

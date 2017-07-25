@@ -12,59 +12,27 @@ import java.util.Map;
 
 public class UserProfile {
 
-    private String mEmail, mPassword, mDisplayName, mUniqueID;
+    private String mEmail;
     private Map<String, String> mFriendList;
 
     public UserProfile(){
-        mEmail = "None";
-        mPassword = "None";
-        mDisplayName = "None";
-        mUniqueID = "None";
-        mFriendList = new HashMap<String,String>();
-    }
-
-    public UserProfile(String mEmail, String mPassword, String mDisplayName,
-                       String mUniqueID) {
-        this.mEmail = mEmail;
-        this.mPassword = mPassword;
-        this.mDisplayName = mDisplayName;
-        this.mUniqueID = mUniqueID;
+        mEmail = "none";
         mFriendList = new HashMap<String, String>();
     }
 
-    public String getmEmail() {
+    public UserProfile(String email){
+        mEmail = email;
+    }
+
+    public void setEmail(String email){
+        mEmail = email;
+    }
+
+    public String getEmail(){
         return mEmail;
     }
 
-    public void setmEmail(String mEmail) {
-        this.mEmail = mEmail;
-    }
-
-    public String getmPassword() {
-        return mPassword;
-    }
-
-    public void setmPassword(String mPassword) {
-        this.mPassword = mPassword;
-    }
-
-    public String getmDisplayName() {
-        return mDisplayName;
-    }
-
-    public void setmDisplayName(String mDisplayName) {
-        this.mDisplayName = mDisplayName;
-    }
-
-    public String getmUniqueID() {
-        return mUniqueID;
-    }
-
-    public void setmUniqueID(String mUniqueID) {
-        this.mUniqueID = mUniqueID;
-    }
-
-    public Map<String, String> getmFriendList() {
+    public Map<String, String> getFriends() {
         return mFriendList;
     }
 
@@ -72,7 +40,7 @@ public class UserProfile {
         mFriendList.put(UniqueId, DisplayName);
     }
 
-    public void removeFriend(String UniqueId){
+    public void removeFriends(String UniqueId){
         mFriendList.remove(UniqueId);
     }
 

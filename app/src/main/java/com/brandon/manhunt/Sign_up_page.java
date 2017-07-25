@@ -21,11 +21,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Sign_up_page extends AppCompatActivity implements View.OnClickListener {
 
@@ -51,9 +55,6 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
 
         //Button
         findViewById(R.id.login_button).setOnClickListener(this);
-
-        //Database
-        ref = FirebaseDatabase.getInstance().getReference("Users");
 
         //Authentication
         mAuth = FirebaseAuth.getInstance();
@@ -88,8 +89,15 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         createAccount();
+        saveToDatabase();
     }
 
+    private void saveToDatabase(){
+        String id = mAuth.getCurrentUser().getUid();
+        ref = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child(id);
+        ref.setValue(new UserProfile());
+    }
 
     private void createAccount() {
         String email = mEmailInput.getText().toString();
@@ -104,11 +112,8 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("IncreateAccount", "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            setDisplayName(name);
                             Toast.makeText(Sign_up_page.this, "Email already registered",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -121,7 +126,24 @@ public class Sign_up_page extends AppCompatActivity implements View.OnClickListe
                             finish();
                         }
                         progress.cancel();
-                        // ...
+                    }
+                });
+    }
+
+    private void setDisplayName(String name){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "User profile updated.");
+                        }
                     }
                 });
     }
