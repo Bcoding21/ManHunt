@@ -1,38 +1,35 @@
 {
   "project_info": {
-    "project_number": "482180913725",
-    "firebase_url": "https://manhunt-9c24d.firebaseio.com",
-    "project_id": "manhunt-9c24d",
-    "storage_bucket": "manhunt-9c24d.appspot.com"
+    "project_number": "677615559368",
+    "firebase_url": "https://manhunt-51238.firebaseio.com",
+    "project_id": "manhunt-51238",
+    "storage_bucket": "manhunt-51238.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:482180913725:android:492936748cff0576",
+        "mobilesdk_app_id": "1:677615559368:android:492936748cff0576",
         "android_client_info": {
           "package_name": "com.brandon.manhunt"
         }
       },
       "oauth_client": [
         {
-          "client_id": "482180913725-9fhm5i4165vhlp5tadpaun4tcrs8t6to.apps.googleusercontent.com",
+          "client_id": "677615559368-vc1pf8p3o703gjobq64rpegu5qmvv2fl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.brandon.manhunt",
-            "certificate_hash": "c5aed35f636e6c8f6d283dee5b3504864b01d7e7"
+            "certificate_hash": "787b5b431a856145eaa5ea2acb6c0f16f822852c"
           }
         },
         {
-          "client_id": "482180913725-g1mi6t3h5u9su5jp6ouclm00a2npho37.apps.googleusercontent.com",
+          "client_id": "677615559368-t9ds6o2hqrt6qgsssordouj9c5ef3toi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC7U6SJEAB0FLO6ZeIoBYmm7Lb6qqCROS8"
-        },
-        {
-          "current_key": "AIzaSyBcpAdjvc39OnK95eeghU8tV-DN5pX_sjU"
+          "current_key": "AIzaSyAvgVXxfQ9ub0kqDdwE56do9w9zukALPrk"
         }
       ],
       "services": {
@@ -43,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "482180913725-g1mi6t3h5u9su5jp6ouclm00a2npho37.apps.googleusercontent.com",
+              "client_id": "677615559368-t9ds6o2hqrt6qgsssordouj9c5ef3toi.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
