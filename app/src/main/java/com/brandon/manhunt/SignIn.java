@@ -16,6 +16,7 @@ public class SignIn extends AppCompatActivity {
     EditText mName;
     EditText mPasswordField;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mName = (EditText)findViewById();
