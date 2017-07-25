@@ -6,12 +6,30 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        findViewById(R.id.SignUp).setOnClickListener(this);
+        findViewById(R.id.SignIn).setOnClickListener(this);
+
+    }
+
+    public void onClick(View v){
+
+        switch(v.getId()){
+
+            case R.id.SignIn:
+                startActivity(new Intent());
+                break;
+
+            case R.id.SignUp:
+                startActivity(new Intent());
+                break;
+        }
     }
 }
