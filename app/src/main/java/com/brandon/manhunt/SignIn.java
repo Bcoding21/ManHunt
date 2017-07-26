@@ -19,21 +19,20 @@ import com.google.firebase.auth.FirebaseAuth;
 public class SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    EditText mName;
-    EditText mPasswordField;
+    EditText mEmail, mPasswordField;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       // mName = (EditText)findViewById();
-        //mPasswordField = (EditText)findViewById();
+        mEmail = (EditText)findViewById(R.id.email);
+        mPasswordField = (EditText)findViewById(R.id.password);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
     }
 
-    private void signIn(String email, String password){
+    private void signIn(final String email, final String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
