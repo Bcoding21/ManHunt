@@ -8,28 +8,37 @@
     tools:context="com.brandon.manhunt.MainPage">
 
     <TextView
+        android:id="@+id/display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome Brandon"
+        android:text="Welcome"
         android:textSize="40dp"
         android:layout_marginTop="30dp"
         android:layout_gravity="center"/>
 
     <Button
+        android:id="@+id/play_game"
         android:layout_marginTop="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Start Game"/>
+        android:text="Create Game"/>
 
     <Button
-        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join a game"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/delete_acc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Delete Account" />
 
     <Button
+        android:id="@+id/log_out"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
