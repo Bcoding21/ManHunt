@@ -8,7 +8,7 @@ import android.widget.EditText;
 public class AddUsers extends AppCompatActivity implements View.OnClickListener{
 
     EditText mPhoneNumberField;
-    String
+
     
 
     @Override
@@ -24,7 +24,7 @@ public class AddUsers extends AppCompatActivity implements View.OnClickListener{
         mPhoneNumberField = (EditText)findViewById(R.id.phone_number_field);
 
         // Game session number
-        game_session_id = "12345";
+
 
     }
 

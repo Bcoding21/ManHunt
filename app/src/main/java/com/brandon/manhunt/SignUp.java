@@ -32,7 +32,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);=
+        setContentView(R.layout.activity_sign_up);
 
         // Progress Dialog
         progress = new ProgressDialog(this);
