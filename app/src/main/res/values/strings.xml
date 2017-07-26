@@ -28,4 +28,7 @@
     </string>
     <string name="title_activity_base_page">base_page</string>
     <string name="title_activity_sign_in">SignIn</string>
+
+    <string name="enter_email">Enter email address</string>
+    <string name="enter_password">Enter password</string>
 </resources>
