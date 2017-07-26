@@ -8,7 +8,7 @@ import android.widget.EditText;
 public class AddUsers extends AppCompatActivity implements View.OnClickListener{
 
     EditText mPhoneNumberField;
-    String game_session_id;
+    String
     
 
     @Override
