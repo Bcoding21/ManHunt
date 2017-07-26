@@ -12,7 +12,7 @@
         android:id="@+id/display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter you email display name"
+        android:hint="Enter your email display name"
         android:inputType="textAutoComplete"
         android:layout_marginTop="50dp"/>
 
@@ -20,7 +20,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter you email address"
+        android:hint="Enter your email address"
         android:inputType="textEmailAddress"
         android:layout_marginTop="100dp"/>
 
@@ -28,7 +28,7 @@
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter you password"
+        android:hint="Enter your password"
         android:inputType="textPassword"
         android:layout_marginTop="100dp"/>
 
