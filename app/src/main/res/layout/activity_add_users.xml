@@ -7,15 +7,15 @@
     tools:context="com.brandon.manhunt.AddUsers"
     android:orientation="vertical">
 
-    
+
     <EditText
         android:id="@+id/phone_number_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="175dp"
-        android:inputType="phone"
-        android:hint="Enter a phone number"/>
-    
+        android:hint="Enter a phone number"
+        android:inputType="phone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
