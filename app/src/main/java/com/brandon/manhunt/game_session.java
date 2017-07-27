@@ -31,9 +31,13 @@ public class game_session {
         this.mGame_in_progress = mGame_in_progress;
     }
 
-
     public void addPlayer(String player_name){
         mPeople.add(player_name);
+
+    }
+
+    public void removePlayer(String player_name){
+        mPeople.remove(player_name);
     }
 
 
