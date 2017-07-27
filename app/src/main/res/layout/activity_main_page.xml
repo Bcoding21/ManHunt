@@ -11,37 +11,47 @@
         android:id="@+id/display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
-        android:textSize="40dp"
+        android:text="Welcome to Manhunt"
+        android:textSize="34dp"
         android:layout_marginTop="30dp"
         android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/play_game"
-        android:layout_marginTop="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Create Game"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginRight="110dp"
+        android:orientation="vertical"
+        >
+        <Button
+            android:id="@+id/play_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Create Game"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Join a game"
-        android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/join_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Join a game"
+            android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/delete_acc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Delete Account" />
+        <Button
+            android:id="@+id/delete_acc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Delete Account" />
 
-    <Button
-        android:id="@+id/log_out"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Log out"/>
+        <Button
+            android:id="@+id/log_out"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log out"/>
+    </LinearLayout>
+
 
 </LinearLayout>
