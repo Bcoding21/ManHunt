@@ -15,6 +15,8 @@ public class game_session {
     List<String> mPeople;
     Map<String, String> mLocations;
 
+    
+
     public String getmSession_id() {
         return mSession_id;
     }
@@ -33,15 +35,12 @@ public class game_session {
 
     public void addPlayer(String player_name){
         mPeople.add(player_name);
-
+        mLocations.put(player_name, "");
     }
 
     public void removePlayer(String player_name){
         mPeople.remove(player_name);
+        mLocations.remove(player_name);
     }
-
-
-
-
 
 }
