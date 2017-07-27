@@ -28,6 +28,7 @@ public class AddUsers extends AppCompatActivity implements View.OnClickListener{
 
         // Database
         ref = FirebaseDatabase.getInstance().getReference(GAME_SESSION_ID);
+        ref.setValue(new gameSession(GAME_SESSION_ID));
 
     }
 
@@ -37,23 +38,7 @@ public class AddUsers extends AppCompatActivity implements View.OnClickListener{
 
             case R.id.add_button:
                 String phone_number = mPhoneNumberField.getText().toString();
-
-
-
-
-
-
-
-
-
-
                 break;
-
-
-
-
-
-
 
             case R.id.start_game_button:
                 break;

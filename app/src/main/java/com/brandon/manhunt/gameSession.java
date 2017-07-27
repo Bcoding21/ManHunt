@@ -1,5 +1,7 @@
 package com.brandon.manhunt;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,15 +9,18 @@ import java.util.Map;
  * Created by brandoncole on 7/26/17.
  */
 
-public class game_session {
-
+public class gameSession {
     private String mSession_id;
     private boolean mGame_in_progress;
+    private List<String> mPlayers;
+    private Map<String, String> mPlayerLocations;
 
-    List<String> mPeople;
-    Map<String, String> mLocations;
-
-    
+    public gameSession(String sessionId){
+        mSession_id = sessionId;
+        mGame_in_progress = false;
+        mPlayers = new ArrayList<String>();
+        mPlayerLocations = new HashMap<String, String>();
+    }
 
     public String getmSession_id() {
         return mSession_id;
@@ -34,13 +39,13 @@ public class game_session {
     }
 
     public void addPlayer(String player_name){
-        mPeople.add(player_name);
-        mLocations.put(player_name, "");
+        mPlayers.add(player_name);
+        mPlayerLocations.put(player_name, "");
     }
 
     public void removePlayer(String player_name){
-        mPeople.remove(player_name);
-        mLocations.remove(player_name);
+        mPlayers.remove(player_name);
+        mPlayerLocations.remove(player_name);
     }
 
 }
