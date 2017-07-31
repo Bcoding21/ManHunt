@@ -1,47 +1,42 @@
 package com.brandon.manhunt;
 
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class AddUsers extends AppCompatActivity implements View.OnClickListener{
+public class AddUsers extends AppCompatActivity{
 
-    private final String GAME_SESSION_ID = "12345";
-    private EditText mPhoneNumberField;
+    private final String GAME_SESSION_ID = "game1";
+    private TextView mHuntedField;
     DatabaseReference ref;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_users);
 
-        // Button
-        findViewById(R.id.add_button).setOnClickListener(this);
-        findViewById(R.id.start_game_button).setOnClickListener(this);
-
-        // EditText
-        mPhoneNumberField = (EditText)findViewById(R.id.phone_number_field);
+        // Authentication
+        mAuth = FirebaseAuth.getInstance();
 
         // Database
         ref = FirebaseDatabase.getInstance().getReference(GAME_SESSION_ID);
-        ref.setValue(new gameSession(GAME_SESSION_ID));
+        ref.child(mAuth.getCurrentUser().getEmail().replace("@", "at").replace(".", "dot")).setValue("11:00:45");
 
-    }
-
-    public void onClick(View v){
-
-        switch(v.getId()){
-
-            case R.id.add_button:
-                String phone_number = mPhoneNumberField.getText().toString();
-                break;
-
-            case R.id.start_game_button:
-                break;
-        }
+        // EditText
+        mHuntedField = (TextView) findViewById(R.id.hunted);
+        mHuntedField.append(mAuth.getCurrentUser().getEmail());
     }
 }
+
