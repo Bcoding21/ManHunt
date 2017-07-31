@@ -12,8 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AddUsers extends AppCompatActivity{
 
@@ -31,12 +34,31 @@ public class AddUsers extends AppCompatActivity{
         mAuth = FirebaseAuth.getInstance();
 
         // Database
-        ref = FirebaseDatabase.getInstance().getReference(GAME_SESSION_ID);
-        ref.child(mAuth.getCurrentUser().getEmail().replace("@", "at").replace(".", "dot")).setValue("11:00:45");
+        ref = FirebaseDatabase.getInstance().getReference();
 
         // EditText
         mHuntedField = (TextView) findViewById(R.id.hunted);
-        mHuntedField.append(mAuth.getCurrentUser().getEmail());
+
+        final String user_email = mAuth.getCurrentUser().getEmail();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild("Hunted")){
+                    ref.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot"))
+                            .setValue("Location");
+                }
+                else {
+                    ref.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot"));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }
 
