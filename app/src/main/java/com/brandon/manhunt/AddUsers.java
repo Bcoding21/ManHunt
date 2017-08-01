@@ -18,34 +18,41 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class AddUsers extends AppCompatActivity{
+import java.util.Iterator;
+
+public class AddUsers extends AppCompatActivity {
 
     private final String GAME_SESSION_ID = "game1";
-    private TextView mHuntedField;
+    private TextView mDisplayField;
     DatabaseReference ref;
     private FirebaseAuth mAuth;
+    private String mNameToDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_users);
 
-        // Authentication
+        // FireBase
         mAuth = FirebaseAuth.getInstance();
-
-        // Database
         ref = FirebaseDatabase.getInstance().getReference();
 
-        final String user_email = mAuth.getCurrentUser().getEmail();
+        // TextView
+        mDisplayField = (TextView)findViewById(R.id.display_info);
 
+        addUser();
+        setDisplay();
+    }
+
+    private void addUser() {
+        final String user_email = mAuth.getCurrentUser().getEmail();
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild("Hunted")){
+                if (!dataSnapshot.hasChild("Hunted")) {
                     ref.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot"))
                             .setValue("Location");
-                }
-                else if (dataSnapshot.hasChild("Hunted")) {
+                } else if (dataSnapshot.hasChild("Hunted")) {
                     ref.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot"))
                             .setValue("Location");
                 }
@@ -56,6 +63,26 @@ public class AddUsers extends AppCompatActivity{
 
             }
         });
+    }
 
+    private void setDisplay() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("Hunted")){
+                    Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
+                    DataSnapshot hunted = children.iterator().next();
+                    mDisplayField.append(hunted.getKey());
+                }
+
+                else if (!dataSnapshot.hasChild("Hunters")){
+                    mDisplayField.append("You are hunted");
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

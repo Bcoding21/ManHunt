@@ -85,7 +85,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
                                 progress.cancel();
-                                FirebaseAuthException e = (FirebaseAuthException)task.getException();
+                                Exception e = task.getException();
                                 Toast.makeText(SignUp.this, "Failed Registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             else{
