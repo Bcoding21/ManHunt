@@ -12,9 +12,15 @@
         android:id="@+id/hunted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="175dp"
+        android:layout_marginTop="30dp"
         android:text="Looking for: "
         android:textSize="30dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
     
 
 </LinearLayout>
