@@ -53,9 +53,9 @@ public class GamePageFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChild("Hunted")) {
-                    mRef.child("Hunted").setValue(user_email.replace("@", "at").replace(".", "dot"));
+                    mRef.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot")).setValue("pussy");
                 } else if (dataSnapshot.hasChild("Hunted")) {
-                    mRef.child("Hunters").setValue(user_email.replace("@", "at").replace(".", "dot"));
+                    mRef.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot")).setValue("dick");
                 }
             }
             @Override
