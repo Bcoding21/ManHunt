@@ -48,8 +48,9 @@ public class AddUsers extends AppCompatActivity{
                     ref.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot"))
                             .setValue("Location");
                 }
-                else {
-                    ref.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot"));
+                else if (dataSnapshot.hasChild("Hunted")) {
+                    ref.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot"))
+                            .setValue("Location");
                 }
             }
 
