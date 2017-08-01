@@ -51,7 +51,7 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         switch (v.getId()){
 
             case R.id.play_game:
-                startActivity(new Intent(MainPage.this, AddUsers.class));
+                startActivity(new Intent(MainPage.this, gamePage.class));
                 break;
 
             case R.id.delete_acc:
