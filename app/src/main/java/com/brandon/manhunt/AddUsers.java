@@ -36,9 +36,26 @@ public class AddUsers extends AppCompatActivity{
         // Database
         ref = FirebaseDatabase.getInstance().getReference();
 
+        final String user_email = mAuth.getCurrentUser().getEmail();
 
-        ref.child("Hunted").setValue(mAuth.getCurrentUser().getEmail());
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild("Hunted")){
+                    ref.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot"))
+                            .setValue("Location");
+                }
+                else if (dataSnapshot.hasChild("Hunted")) {
+                    ref.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot"))
+                            .setValue("Location");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 }
-
