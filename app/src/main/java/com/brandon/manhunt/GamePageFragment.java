@@ -48,8 +48,6 @@ public class GamePageFragment extends Fragment {
 
             addUser();
             displayInfo();
-
-
             return v;
         }
         else{
