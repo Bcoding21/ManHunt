@@ -68,6 +68,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         createAcc(mEmailField.getText().toString().trim(),
                 mPasswordField.getText().toString().trim());
+
     }
 
     private void createAcc(String email, String password){
