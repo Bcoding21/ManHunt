@@ -81,8 +81,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             progress.setMessage("Working..");
             progress.show();
 
-            updateProfile(mDisplayName.getText().toString());
-
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -96,33 +94,14 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 progress.cancel();
                                 Toast.makeText(SignUp.this, "Sign up complete", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(SignUp.this, MainPage.class);
-
+                                i.putExtra("name", mDisplayName.getText().toString());
+                                startActivity(i);
                                 finish();
                             }
                         }
                     });
         }
     }
-
-
-    private void updateProfile(String name){
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "User profile updated.");
-                        }
-                    }
-                });
-    }
-
 
     @Override
     public void onStart() {

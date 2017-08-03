@@ -61,7 +61,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
         mUser = mAuth.getCurrentUser();
 
         // Determine if user is hunter/hunted
-        isHunted();
+        //isHunted();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void isHunted(){ // check if user is the hunter or hunted
+  /*  private void isHunted(){ // check if user is the hunter or hunted
 
         DatabaseReference ref = mDatabase.child("Hunted");
 
@@ -155,6 +155,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
-    }
+    }*/
 
 }

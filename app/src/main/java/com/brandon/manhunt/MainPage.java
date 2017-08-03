@@ -33,7 +33,8 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.delete_acc).setOnClickListener(this);
         findViewById(R.id.play_game).setOnClickListener(this);
 
-        String name = mAuth.getCurrentUser().getDisplayName();
+        Bundle extra = getIntent().getExtras();
+        String name = extra.getString("name");
         mWelcome.append("\n" + name);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
