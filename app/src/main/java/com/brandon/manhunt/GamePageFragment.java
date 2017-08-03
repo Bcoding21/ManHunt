@@ -48,16 +48,20 @@ public class GamePageFragment extends Fragment {
             return v;
         }
         else{
-
+            String display = savedInstanceState.getString("display");
+            mDipslayField.setText(display);
             return v;
         }
     }
 
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-
-
-
+        String display = mDipslayField.getText().toString();
+        outState.putString("display", display);
+    }
 
     private void addUser() {
         final String user_email = mAuth.getCurrentUser().getEmail();
