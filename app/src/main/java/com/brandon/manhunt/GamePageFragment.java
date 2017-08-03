@@ -33,24 +33,30 @@ public class GamePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game_page, container, false);
 
-        //EditText
-        mDipslayField = v.findViewById(R.id.display_info);
+        if (savedInstanceState == null ) {
+            //EditText
+            mDipslayField = v.findViewById(R.id.display_info);
 
-        //Firebase
-        mAuth = FirebaseAuth.getInstance();
-        mRef = FirebaseDatabase.getInstance().getReference();
+            //Firebase
+            mAuth = FirebaseAuth.getInstance();
+            mRef = FirebaseDatabase.getInstance().getReference();
 
-        addUser();
-        displayInfo();
-
-
-
+            addUser();
+            displayInfo();
 
 
+            return v;
+        }
+        else{
 
-
-        return v;
+            return v;
+        }
     }
+
+
+
+
+
 
 
     private void addUser() {
@@ -59,11 +65,13 @@ public class GamePageFragment extends Fragment {
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if (!dataSnapshot.hasChild("Hunted")) {
                     mRef.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot")).setValue("LOCATION");
                 } else if (dataSnapshot.hasChild("Hunted")) {
                     mRef.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot")).setValue("LOCATOIN");
                 }
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -73,14 +81,13 @@ public class GamePageFragment extends Fragment {
     }
 
 
-
-
     private void displayInfo() {
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("Hunted")) {
+
                     Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
                     String hunted_player = children.iterator().next().getKey();
                     mDipslayField.append(hunted_player);
