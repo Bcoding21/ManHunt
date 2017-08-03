@@ -35,4 +35,7 @@
     <string name="title_activity_game_page">gamePage</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+
+    <string name="google_maps_key">AIzaSyDnB4xi-3jDp_ljKE6p7F0N3HjZMhutNBM	</string>
 </resources>
