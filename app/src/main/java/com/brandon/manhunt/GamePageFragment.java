@@ -33,16 +33,26 @@ public class GamePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game_page, container, false);
 
-        //EditText
-        mDipslayField = v.findViewById(R.id.display_info);
+        if (savedInstanceState == null) {
+            //EditText
+            mDipslayField = v.findViewById(R.id.display_info);
 
-        //Firebase
-        mAuth = FirebaseAuth.getInstance();
-        mRef = FirebaseDatabase.getInstance().getReference();
+            //Firebase
+            mAuth = FirebaseAuth.getInstance();
+            mRef = FirebaseDatabase.getInstance().getReference();
 
-        addUser();
-        displayInfo();
-        return v;
+            addUser();
+            displayInfo();
+            return v;
+        }
+        else
+        {
+
+
+
+
+            return v;
+        }
     }
 
 
@@ -87,4 +97,6 @@ public class GamePageFragment extends Fragment {
             }
         });
     }
+
+
 }

@@ -26,6 +26,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="delete_acc_mess">Account Deleted</string>
     <string name="title_activity_base_page">base_page</string>
     <string name="title_activity_sign_in">SignIn</string>
 
