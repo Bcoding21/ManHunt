@@ -46,7 +46,7 @@ public class gamePage extends AppCompatActivity {
         mSectionsPagerAdapter.addFrag(new GamePageFragment(), "Hunt Data");
         mSectionsPagerAdapter.addFrag(new MapPageFragment(), "Hunters Map");
         mSectionsPagerAdapter.addFrag(new QuitPageFragment(), "Abandon Hunt");
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        vp.setAdapter(mSectionsPagerAdapter);
     }
 
 }

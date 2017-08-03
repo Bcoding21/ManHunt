@@ -34,6 +34,7 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.play_game).setOnClickListener(this);
 
         String name = mAuth.getCurrentUser().getDisplayName();
+        mWelcome.append("\n" + name);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override

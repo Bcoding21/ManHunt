@@ -77,8 +77,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             Toast.makeText(this, "Please fill each field", Toast.LENGTH_SHORT).show();
         }
         else {
+
             progress.setMessage("Working..");
             progress.show();
+
+            updateProfile(mDisplayName.getText().toString());
 
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -92,12 +95,32 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                             else{
                                 progress.cancel();
                                 Toast.makeText(SignUp.this, "Sign up complete", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(SignUp.this, MainPage.class));
+                                Intent i = new Intent(SignUp.this, MainPage.class);
+
                                 finish();
                             }
                         }
                     });
         }
+    }
+
+
+    private void updateProfile(String name){
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "User profile updated.");
+                        }
+                    }
+                });
     }
 
 

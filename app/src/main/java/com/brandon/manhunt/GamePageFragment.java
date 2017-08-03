@@ -1,5 +1,6 @@
 package com.brandon.manhunt;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,7 +36,7 @@ public class GamePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game_page, container, false);
 
-        if (savedInstanceState == null ) {
+        if (savedInstanceState == null) {
             //Textview
             mDipslayField = v.findViewById(R.id.display_info);
             mClosestHunters = v.findViewById(R.id.hunters_list);
@@ -47,6 +48,8 @@ public class GamePageFragment extends Fragment {
 
             addUser();
             displayInfo();
+
+
             return v;
         }
         else{
@@ -64,6 +67,7 @@ public class GamePageFragment extends Fragment {
         String display = mDipslayField.getText().toString();
         outState.putString("display", display);
     }
+
 
     private void addUser() {
         final String user_email = mAuth.getCurrentUser().getEmail();
@@ -137,14 +141,5 @@ public class GamePageFragment extends Fragment {
         });
     }
 
-
-
-
-    private void ListenForLocationChanges(){
-
-        DatabaseReference dbf = FirebaseDatabase.getInstance().getReference();
-
-
-    }
 
 }
