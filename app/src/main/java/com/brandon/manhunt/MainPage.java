@@ -20,6 +20,7 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
     TextView mWelcome;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private String mUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,8 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.play_game).setOnClickListener(this);
 
         Bundle extra = getIntent().getExtras();
-        String name = extra.getString("name");
-        mWelcome.append("\n" + name);
+        mUserName = extra.getString("name");
+        mWelcome.append("\n" + mUserName);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -56,7 +57,9 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         switch (v.getId()){
 
             case R.id.play_game:
-                startActivity(new Intent(MainPage.this, gamePage.class));
+                Intent i = new Intent(MainPage.this, gamePage.class);
+                i.putExtra("name", mUserName);
+                startActivity(i);
                 break;
 
             case R.id.delete_acc:

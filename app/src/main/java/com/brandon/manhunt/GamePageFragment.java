@@ -77,9 +77,15 @@ public class GamePageFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.hasChild("Hunted")) {
-                    mRef.child("Hunted").child(user_email.replace("@", "at").replace(".", "dot")).setValue("LOCATION");
+                    String formatEmail = user_email.replace("@", "at").replace(".", "dot");
+                    String name = getArguments().getString("name");
+                    User newUser = new User(name, 0.0, 0.0);
+                    mRef.child("Hunted").child(formatEmail).setValue(newUser);
                 } else if (dataSnapshot.hasChild("Hunted")) {
-                    mRef.child("Hunters").child(user_email.replace("@", "at").replace(".", "dot")).setValue("LOCATOIN");
+                    String formatEmail = user_email.replace("@", "at").replace(".", "dot");
+                    String name = getArguments().getString("name");
+                    User newUser = new User(name, 0.0, 0.0);
+                    mRef.child("Hunter").child(formatEmail).setValue(newUser);
                 }
 
             }

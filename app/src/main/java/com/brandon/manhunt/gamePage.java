@@ -42,8 +42,15 @@ public class gamePage extends AppCompatActivity {
 
 
     private void setViewPager(ViewPager vp){
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mSectionsPagerAdapter.addFrag(new GamePageFragment(), "Hunt Data");
+
+        Fragment f = new GamePageFragment();
+        Bundle b = getIntent().getExtras();
+        String name = b.getString("name");
+        f.setArguments(getIntent().getExtras());
+
+        mSectionsPagerAdapter.addFrag(f, "Hunt Data");
         mSectionsPagerAdapter.addFrag(new MapPageFragment(), "Hunters Map");
         mSectionsPagerAdapter.addFrag(new QuitPageFragment(), "Abandon Hunt");
         vp.setAdapter(mSectionsPagerAdapter);
