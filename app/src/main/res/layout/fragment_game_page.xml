@@ -15,7 +15,8 @@
         android:text="You are hunting: "
         android:textSize="30dp"/>
 
-    <ImageView
+    <TextView
+        android:id="@+id/hunters_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

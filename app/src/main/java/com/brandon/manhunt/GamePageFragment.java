@@ -16,13 +16,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Iterator;
+
 /**
  * Created by brandoncole on 8/1/17.
  */
 
 public class GamePageFragment extends Fragment {
 
-    private TextView mDipslayField;
+    private TextView mDipslayField, mClosestHunters;
     private DatabaseReference mRef;
     private FirebaseAuth mAuth;
     private static final String TAG = "FRAGMENT_GAME_PAGE";
@@ -34,8 +36,10 @@ public class GamePageFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_game_page, container, false);
 
         if (savedInstanceState == null ) {
-            //EditText
+            //Textview
             mDipslayField = v.findViewById(R.id.display_info);
+            mClosestHunters = v.findViewById(R.id.hunters_list);
+
 
             //Firebase
             mAuth = FirebaseAuth.getInstance();
@@ -43,8 +47,6 @@ public class GamePageFragment extends Fragment {
 
             addUser();
             displayInfo();
-
-
             return v;
         }
         else{
@@ -98,6 +100,7 @@ public class GamePageFragment extends Fragment {
 
                 } else if (!dataSnapshot.hasChild("Hunted")) {
                     mDipslayField.setText("YOU ARE BEING HUNTED!!");
+                    getClosestHunters();
                 }
             }
 
@@ -108,5 +111,40 @@ public class GamePageFragment extends Fragment {
         });
     }
 
+    private void getClosestHunters(){
+        DatabaseReference dbz = FirebaseDatabase.getInstance().getReference();
+
+        dbz.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int numHunters = 0;
+                String closest_hunters = "";
+
+                Iterable<DataSnapshot> snap = dataSnapshot.child("Hunters").getChildren();
+                Iterator<DataSnapshot> childs = snap.iterator();
+
+                while (childs.hasNext() && numHunters < 5){
+                    closest_hunters += childs.next().getKey() + " is 10 meters away" + "\n";
+                }
+                mClosestHunters.setText("");
+                mClosestHunters.append(closest_hunters);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+    private void ListenForLocationChanges(){
+
+        DatabaseReference dbf = FirebaseDatabase.getInstance().getReference();
+
+
+    }
 
 }
