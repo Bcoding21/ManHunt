@@ -47,6 +47,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         mEmailField.setText("brandoncole673@gmail.com");
         mPasswordField.setText("Unknown21");
         mDisplayName.setText("Brandon");
+        User.getInstance().setName(mDisplayName.getText().toString());
+        User.getInstance().setName(mEmailField.getText().toString());
 
         // Firebase instant
         mAuth = FirebaseAuth.getInstance();

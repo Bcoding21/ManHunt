@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -42,7 +43,6 @@ public class GamePageFragment extends Fragment {
     private final int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
     public static final Handler handle = new Handler();
     public static Runnable r;
-
 
     @Nullable
     @Override
@@ -101,10 +101,9 @@ public class GamePageFragment extends Fragment {
 
                 if (!dataSnapshot.exists()) {
 
-                    User newUser = new User(mCurrentUserName, 0.0, 0.0);
+                    User newUser = new User(mCurrentUserName, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mCurrentUserEmail).setValue(newUser);
                     mDisplayField.setText("You are being hunted");
-                    mReference.child("HuntedEmail").setValue(mCurrentUserEmail);
                     sendHuntedLocation();
 
 
@@ -112,7 +111,7 @@ public class GamePageFragment extends Fragment {
 
                     User newUser = new User(mCurrentUserName, 0.0, 0.0);
                     mReference.child("Hunters").child(mCurrentUserEmail).setValue(newUser);
-                    Map<String, ?> myMap = (HashMap)dataSnapshot.getValue();
+                    Map<String, Objects> myMap = (HashMap)dataSnapshot.getValue();
                     for (String key : myMap.keySet()){
                         mHuntedEmail= key;
                     }
@@ -159,7 +158,7 @@ public class GamePageFragment extends Fragment {
                 public void run() {
                     query.child(mCurrentUserEmail).child("lat").setValue(++lat);
                     query.child(mCurrentUserEmail).child("long").setValue(++Long);
-                    handle.postDelayed(this, 1000);
+                    handle.postDelayed(this, 250);
                 }
             };
             handle.postDelayed(r, 0);
