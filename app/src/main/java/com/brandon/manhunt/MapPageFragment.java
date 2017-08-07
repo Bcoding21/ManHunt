@@ -42,31 +42,14 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     View mView;
     LocationManager locationManager;
     LocationListener mLocationListener;
-    DatabaseReference mDatabase;
-    FirebaseAuth mAuth;
-    FirebaseUser mUser;
-    Boolean mIsHunted;
-
-
-    public MapPageFragment(){}
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Firebase setup
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
-        // Determine if user is hunter/hunted
-        //isHunted();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Gets the MapView from the XML layout and creates it
         mView = inflater.inflate(R.layout.fragment_map_page, container, false);
 
@@ -109,52 +92,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    void getCurrentLocation(){}
-
-
-    private void SendLocation(){ // sends location to firebase
-
-        if (mIsHunted)
-        {
-            DatabaseReference ref = mDatabase.child("Hunted");
-
-        }
-        else{
-
-        }
-    }
-
-    private void GetLocations() { // gets location of hunters or hunted from firebase
-
-        if (mIsHunted){
-
-        }
-
-        else{
-
-        }
-    }
-
-  /*  private void isHunted(){ // check if user is the hunter or hunted
-
-        DatabaseReference ref = mDatabase.child("Hunted");
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Iterable<DataSnapshot> childrenSnapshot = dataSnapshot.getChildren();
-                String hunted_name = childrenSnapshot.iterator().next().getKey();
-                String database_email = mUser.getEmail();
-                String user_email = database_email.replace("at", "@").replace("dot", ".");
-                mIsHunted = hunted_name.equals(user_email);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }*/
+    public MapPageFragment(){}
 
 }

@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KitKatB2.iml" filepath="$PROJECT_DIR$/KitKatB2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KitKatProject.iml" filepath="$PROJECT_DIR$/KitKatProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/Manhunt.iml" filepath="$PROJECT_DIR$/Manhunt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
