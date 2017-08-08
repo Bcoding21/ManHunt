@@ -89,6 +89,9 @@ public class GamePageFragment extends Fragment {
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
                     mDisplayField.setText("YOU ARE BEING HUTNED!");
                     User.getInstance().setIsHunted(true);
+                    String  userEmail = User.getInstance().getEmail();
+                    User.getInstance().setHuntedEmail(userEmail);
+                    String huntedEmail = User.getInstance().getHuntedEmail();
 
                 } else if (dataSnapshot.hasChild("Hunted")) {
                     User newUser = new User(mUsername, 0.0, 0.0);

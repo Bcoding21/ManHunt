@@ -86,13 +86,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
             mapView.onResume();
             mapView.getMapAsync(this);
         }
-
-        if (mEmail == User.getInstance().getHuntedEmail()){
-            sendHuntedLocation();
-        }
-        else{
-           // getHuntedLocation();
-        }
     }
 
     @Override
@@ -118,31 +111,4 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public MapPageFragment(){}
-
-
-    private void sendHuntedLocation() {
-
-        final DatabaseReference query = mReference.child("Hunted");
-        r = new Runnable() {
-            double lat = 0.1;
-            double Long = 0.1;
-
-            public void run() {
-
-                query.child(User.getInstance().getHuntedEmail()).child("lat").setValue(++lat);
-                query.child(User.getInstance().getHuntedEmail()).child("lat").setValue(++Long);
-
-                handle.postDelayed(this, 1000);
-            }
-        };
-        handle.postDelayed(r, 0);
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handle.removeCallbacks(r);
-    }
 }
