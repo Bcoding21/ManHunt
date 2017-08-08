@@ -32,8 +32,11 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+
+        //Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        // TextView
         mWelcome = (TextView) findViewById(R.id.display);
         findViewById(R.id.log_out).setOnClickListener(this);
         findViewById(R.id.delete_acc).setOnClickListener(this);
@@ -54,8 +57,15 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
             }
         });
+
         mWelcome.append("\n" + mUserName);
 
+        //Buttons
+        findViewById(R.id.log_out).setOnClickListener(this);
+        findViewById(R.id.delete_acc).setOnClickListener(this);
+        findViewById(R.id.play_game).setOnClickListener(this);
+
+        // Listens for sign in/sign out
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

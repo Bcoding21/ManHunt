@@ -60,9 +60,10 @@ public class GamePageFragment extends Fragment {
         // First time game setup
         if (savedInstanceState == null) {
             addUser();  // add user as hunted or hunter to firebase
-        } else {
-            String displayInfo = savedInstanceState.getString("display");
-            mDisplayField.setText(displayInfo);
+        }
+        else{
+            String display = savedInstanceState.getString("display");
+            mDisplayField.setText(display);
         }
         return v;
     }
