@@ -53,6 +53,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     private String mEmail, mUsername;
     LocationManager locationManager;
     LocationListener mLocationListener;
+    private int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,82 +109,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
                 .strokeColor(R.color.colorPrimary)
                 .fillColor(R.color.colorPrimary));
 
-        if (User.getInstance().isHunted()){
-            sendHuntedLocation();
-        }
-        else{
-           // receiveHuntedLocation();
-        }
     }
-
-    public MapPageFragment(){}
-
-    private void receiveHuntedLocation(){
-
-       // getHuntedEmail();
-
-        String name = mHuntedEmail;
-        DatabaseReference query = mReference.child("Hunted").child(name);
-
-        query.addValueEventListener(new ValueEventListener() {
-            double lat = 0;
-            double Longit = 0;
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                lat = (double)dataSnapshot.child("lat").getValue();
-                Longit = (double)dataSnapshot.child("long").getValue();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void sendHuntedLocation() {
-
-        final DatabaseReference query = mReference.child("Hunted");
-        r = new Runnable() {
-            double lat = 0.1;
-            double Long = 0.1;
-
-            public void run() {
-
-                //TODO send locations
-
-                handle.postDelayed(this, 250);
-            }
-        };
-        handle.postDelayed(r, 0);
-    }
-
-
-    private void getHuntedEmail(){
-
-        DatabaseReference query = mReference.child("Hunted");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    Map<String, Objects> myMap = (HashMap) dataSnapshot.getValue();
-                    for (String key : myMap.keySet()) {
-                        mHuntedEmail = key;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handle.removeCallbacks(r);
-    }
-
 
 }

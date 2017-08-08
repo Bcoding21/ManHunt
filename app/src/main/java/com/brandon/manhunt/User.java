@@ -8,6 +8,7 @@ public class User {
     private static User mUser;
     private String mEmail;
     private boolean mIsHunted;
+    private String mHuntedEmail;
 
     public User(String mDisplayName, double lat, double Long) {
         this.mDisplayName = mDisplayName;
@@ -60,4 +61,13 @@ public class User {
     public boolean isHunted(){
         return mIsHunted;
     }
+
+    public String getHuntedEmail(){
+        return mHuntedEmail;
+    }
+
+    public void setHuntedEmail(String s){
+        mHuntedEmail = s;
+    }
 }
+
