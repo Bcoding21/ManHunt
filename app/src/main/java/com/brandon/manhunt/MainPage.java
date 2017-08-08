@@ -14,6 +14,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
@@ -27,17 +32,40 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+
+        //Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        // TextView
         mWelcome = (TextView) findViewById(R.id.display);
         findViewById(R.id.log_out).setOnClickListener(this);
         findViewById(R.id.delete_acc).setOnClickListener(this);
         findViewById(R.id.play_game).setOnClickListener(this);
 
-        Bundle extra = getIntent().getExtras();
-        mUserName = extra.getString("name");
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference();
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = User.getInstance().getEmail();
+                String username = (String)dataSnapshot.child(email).getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         mWelcome.append("\n" + mUserName);
 
+        //Buttons
+        findViewById(R.id.log_out).setOnClickListener(this);
+        findViewById(R.id.delete_acc).setOnClickListener(this);
+        findViewById(R.id.play_game).setOnClickListener(this);
+
+        // Listens for sign in/sign out
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -78,5 +106,25 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
                 startActivity(new Intent(MainPage.this, MainActivity.class));
                 break;
         }
+    }
+
+    private void getUsername(){
+        final FirebaseDatabase data = FirebaseDatabase.getInstance();
+        DatabaseReference ref = data.getReference();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               String email = User.getInstance().getEmail();
+                String username = (String)dataSnapshot.child(email).getValue();
+                mUserName = username;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Not working", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 }

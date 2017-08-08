@@ -18,6 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.R.id.message;
 
@@ -48,6 +53,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         mPasswordField.setText("Unknown21");
         mDisplayName.setText("Brandon");
 
+
         // Firebase instant
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -77,6 +83,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             Toast.makeText(this, "Please fill each field", Toast.LENGTH_SHORT).show();
         }
         else {
+            User.getInstance().setName(mDisplayName.getText().toString());
+            User.getInstance().setEmail(mEmailField.getText().toString());
+
 
             progress.setMessage("Working..");
             progress.show();
@@ -95,12 +104,27 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 Toast.makeText(SignUp.this, "Sign up complete", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(SignUp.this, MainPage.class);
                                 i.putExtra("name", mDisplayName.getText().toString());
+                                storeUserName();
                                 startActivity(i);
                                 finish();
                             }
                         }
                     });
         }
+    }
+
+    private void storeUserName(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        String username = mDisplayName.getText().toString();
+        String email = mEmailField.getText().toString();
+
+        User.getInstance().setEmail(email);
+        String dEmail = User.getInstance().getEmail();
+        User.getInstance().setName(username);
+
+        ref.child("Username").child(dEmail).setValue(username);
     }
 
     @Override

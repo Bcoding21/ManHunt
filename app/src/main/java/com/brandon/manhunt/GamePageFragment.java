@@ -2,6 +2,8 @@ package com.brandon.manhunt;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,15 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -25,93 +35,103 @@ import java.util.Iterator;
 
 public class GamePageFragment extends Fragment {
 
-    private TextView mDipslayField, mClosestHunters;
-    private DatabaseReference mRef;
-    private FirebaseAuth mAuth;
-    private static final String TAG = "FRAGMENT_GAME_PAGE";
-
+    private TextView mDisplayField;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mReference;
+    private String mUsername, mEmail;
+    public static String mHuntedEmail;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game_page, container, false);
 
+        //Textview
+        mDisplayField = v.findViewById(R.id.display_info);
+
+        // set up Firebase
+        mDatabase = FirebaseDatabase.getInstance();
+        mReference = mDatabase.getReference();
+
+        //set username and email
+        mEmail = User.getInstance().getEmail();
+        mReference.child(mEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUsername = dataSnapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        // First time game setup
         if (savedInstanceState == null) {
-            //Textview
-            mDipslayField = v.findViewById(R.id.display_info);
-            mClosestHunters = v.findViewById(R.id.hunters_list);
-
-
-            //Firebase
-            mAuth = FirebaseAuth.getInstance();
-            mRef = FirebaseDatabase.getInstance().getReference();
-
-            addUser();
-            displayInfo();
-
-
-            return v;
+            addUser();  // add user as hunted or hunter to firebase
         }
         else{
             String display = savedInstanceState.getString("display");
-            mDipslayField.setText(display);
-            return v;
+            mDisplayField.setText(display);
         }
+        return v;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String display = mDipslayField.getText().toString();
+        String display = mDisplayField.getText().toString();
         outState.putString("display", display);
     }
 
 
     private void addUser() {
-        final String user_email = mAuth.getCurrentUser().getEmail();
 
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.hasChild("Hunted")) {
-                    String formatEmail = user_email.replace("@", "at").replace(".", "dot");
-                    String name = getArguments().getString("name");
-                    User newUser = new User(name, 0.0, 0.0);
-                    mRef.child("Hunted").child(formatEmail).setValue(newUser);
+
+
+                    String name = mUsername;
+
+                    User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
+                    mReference.child("Hunted").child(mEmail).setValue(newUser);
+                    mDisplayField.setText("YOU ARE BEING HUTNED!");
+                    User.getInstance().setIsHunted(true);
+                    String  userEmail = User.getInstance().getEmail();
+                    User.getInstance().setHuntedEmail(userEmail);
+                    String huntedEmail = User.getInstance().getHuntedEmail();
+
                 } else if (dataSnapshot.hasChild("Hunted")) {
-                    String formatEmail = user_email.replace("@", "at").replace(".", "dot");
-                    String name = getArguments().getString("name");
-                    User newUser = new User(name, 0.0, 0.0);
-                    mRef.child("Hunter").child(formatEmail).setValue(newUser);
-                }
+                    User newUser = new User(mUsername, 0.0, 0.0);
+                    mReference.child("Hunters").child(mEmail).setValue(newUser);
+                    User.getInstance().setIsHunted(false);
+                    setDisplay();
 
+                }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
 
+    private void setDisplay(){
 
-    private void displayInfo() {
-
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("Hunted")) {
-
-                    Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
-                    String hunted_player = children.iterator().next().getKey();
-                    mDipslayField.append(hunted_player);
-
-                } else if (!dataSnapshot.hasChild("Hunted")) {
-                    mDipslayField.setText("YOU ARE BEING HUNTED!!");
-                    getClosestHunters();
-                }
+                Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
+                String huntedPlayer = children.iterator().next().child("displayName").getValue(String.class);
+                String email = children.iterator().next().getKey();
+                mDisplayField.append(huntedPlayer);
+                User.getInstance().setHuntedEmail(email);
             }
 
             @Override
@@ -119,33 +139,9 @@ public class GamePageFragment extends Fragment {
 
             }
         });
+
     }
 
-    private void getClosestHunters(){
-        DatabaseReference dbz = FirebaseDatabase.getInstance().getReference();
-
-        dbz.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int numHunters = 0;
-                String closest_hunters = "";
-
-                Iterable<DataSnapshot> snap = dataSnapshot.child("Hunters").getChildren();
-                Iterator<DataSnapshot> childs = snap.iterator();
-
-                while (childs.hasNext() && numHunters < 5){
-                    closest_hunters += childs.next().getKey() + " is 10 meters away" + "\n";
-                }
-                mClosestHunters.setText("");
-                mClosestHunters.append(closest_hunters);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
 
 }
