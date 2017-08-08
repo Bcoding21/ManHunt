@@ -168,7 +168,7 @@ public class GamePageFragment extends Fragment {
                 == PackageManager.PERMISSION_GRANTED) {
             //Location Permission already granted
             //buildGoogleApiClient();
-            Gmap.setMyLocationEnabled(true);
+
         } else {
             //Request Location Permission
             checkLocationPermission();
