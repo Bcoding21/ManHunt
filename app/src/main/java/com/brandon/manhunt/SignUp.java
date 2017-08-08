@@ -18,6 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.R.id.message;
 
@@ -80,6 +85,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         else {
             User.getInstance().setName(mDisplayName.getText().toString());
             User.getInstance().setEmail(mEmailField.getText().toString());
+            storeUserName();
+
+
             progress.setMessage("Working..");
             progress.show();
 
@@ -103,6 +111,12 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                         }
                     });
         }
+    }
+
+    private void storeUserName(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child(User.getInstance().getEmail()).setValue(User.getInstance().getDisplayName());
     }
 
     @Override
