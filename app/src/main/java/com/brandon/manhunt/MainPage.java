@@ -100,6 +100,9 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
                                     Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(MainPage.this, MainActivity.class));
 
+                        } else if (!task.isSuccessful()){
+                            Toast.makeText(MainPage.this, R.string.delete_account_fail,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
