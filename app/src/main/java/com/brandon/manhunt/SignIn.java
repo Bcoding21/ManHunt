@@ -31,6 +31,7 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         mAuth = FirebaseAuth.getInstance();
+
         //Track when user logs in or out
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -50,6 +51,8 @@ public class SignIn extends AppCompatActivity {
 
         mEmail = (EditText)findViewById(R.id.signin_email);
         mPasswordField = (EditText)findViewById(R.id.signin_password);
+        mEmail.setText("brandoncole673@gmail.com");
+        mPasswordField.setText("Unknown21");
 
         mButton = (Button)findViewById(R.id.signin_button);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -61,10 +64,7 @@ public class SignIn extends AppCompatActivity {
         });
 
     }
-    private void signIn(String email, String password){
-
-        User.getInstance().setEmail(email);
-
+    private void signIn(final String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -79,6 +79,7 @@ public class SignIn extends AppCompatActivity {
                             Toast.makeText(SignIn.this, "Sign-in Failed",
                                     Toast.LENGTH_SHORT).show();
                         } else if (task.isSuccessful()) {
+                            User.getInstance().setEmail(email);
                             Toast.makeText(SignIn.this, "Sign-in Succeeded",
                                     Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(SignIn.this, MainPage.class));

@@ -38,7 +38,22 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.log_out).setOnClickListener(this);
         findViewById(R.id.delete_acc).setOnClickListener(this);
         findViewById(R.id.play_game).setOnClickListener(this);
-        getUsername();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference();
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = User.getInstance().getEmail();
+                String username = (String)dataSnapshot.child(email).getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mWelcome.append("\n" + mUserName);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -85,17 +100,19 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
     private void getUsername(){
         final FirebaseDatabase data = FirebaseDatabase.getInstance();
-        DatabaseReference ref = data.getReference(User.getInstance().getEmail());
+        DatabaseReference ref = data.getReference();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mUserName = dataSnapshot.getValue(String.class);
+               String email = User.getInstance().getEmail();
+                String username = (String)dataSnapshot.child(email).getValue();
+                mUserName = username;
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(getApplicationContext(), "Not working", Toast.LENGTH_LONG).show();
             }
         });
 

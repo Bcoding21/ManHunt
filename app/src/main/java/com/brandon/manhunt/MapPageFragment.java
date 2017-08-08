@@ -108,37 +108,11 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
                 .strokeColor(R.color.colorPrimary)
                 .fillColor(R.color.colorPrimary));
 
-        if (User.getInstance().isHunted()){
-            sendHuntedLocation();
-        }
-        else{
-           // receiveHuntedLocation();
-        }
     }
 
     public MapPageFragment(){}
 
-    private void receiveHuntedLocation(){
 
-       // getHuntedEmail();
-
-        String name = mHuntedEmail;
-        DatabaseReference query = mReference.child("Hunted").child(name);
-
-        query.addValueEventListener(new ValueEventListener() {
-            double lat = 0;
-            double Longit = 0;
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                lat = (double)dataSnapshot.child("lat").getValue();
-                Longit = (double)dataSnapshot.child("long").getValue();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void sendHuntedLocation() {
 
@@ -158,32 +132,9 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void getHuntedEmail(){
-
-        DatabaseReference query = mReference.child("Hunted");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    Map<String, Objects> myMap = (HashMap) dataSnapshot.getValue();
-                    for (String key : myMap.keySet()) {
-                        mHuntedEmail = key;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         handle.removeCallbacks(r);
     }
-
-
 }

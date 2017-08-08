@@ -84,15 +84,16 @@ public class GamePageFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.hasChild("Hunted")) {
+
                     User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
-                    mDisplayField.setText("You are being hunted");
-                    User.getInstance().setIsHunted(true);
+
 
                 } else if (dataSnapshot.hasChild("Hunted")) {
+
                     User newUser = new User(mUsername, 0.0, 0.0);
                     mReference.child("Hunters").child(mEmail).setValue(newUser);
-                    User.getInstance().setIsHunted(false);
+
                 }
             }
             @Override
