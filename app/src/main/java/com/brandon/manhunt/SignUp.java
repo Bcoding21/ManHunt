@@ -116,7 +116,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private void storeUserName(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
-        ref.child(User.getInstance().getEmail()).setValue(User.getInstance().getDisplayName());
+        ref.child("Username").child(User.getInstance().getEmail()).setValue(User.getInstance().getDisplayName());
     }
 
     @Override

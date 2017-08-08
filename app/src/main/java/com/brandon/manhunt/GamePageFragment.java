@@ -87,23 +87,48 @@ public class GamePageFragment extends Fragment {
 
                     User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
-
+                    mDisplayField.setText("YOU ARE BEING HUTNED!");
+                    User.getInstance().setIsHunted(true);
 
                 } else if (dataSnapshot.hasChild("Hunted")) {
-
                     User newUser = new User(mUsername, 0.0, 0.0);
                     mReference.child("Hunters").child(mEmail).setValue(newUser);
+                    User.getInstance().setIsHunted(false);
+                    setDisplay();
 
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
 
+        private void setDisplay(){
 
+        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
+                String huntedPlayer = children.iterator().next().child("displayName").getValue(String.class);
+                mDisplayField.append(huntedPlayer);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
 
 
 }
+
+
+
+
+
