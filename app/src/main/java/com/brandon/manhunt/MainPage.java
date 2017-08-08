@@ -92,11 +92,15 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
             case R.id.delete_acc:
                 FirebaseUser user = mAuth.getCurrentUser();
-
                 user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainPage.this, "Logged out", Toast.LENGTH_SHORT).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(MainPage.this, R.string.delete_account_success,
+                                    Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(MainPage.this, MainActivity.class));
+
+                        }
                     }
                 });
                 break;
