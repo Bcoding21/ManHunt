@@ -87,7 +87,7 @@ public class GamePageFragment extends Fragment {
 
                     User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
-                    mDisplayField.setText("YOU ARE BEING HUNTED!");
+                    mDisplayField.setText("YOU ARE BEING HUTNED!");
                     User.getInstance().setIsHunted(true);
 
                 } else if (dataSnapshot.hasChild("Hunted")) {
@@ -105,14 +105,16 @@ public class GamePageFragment extends Fragment {
         });
     }
 
-        private void setDisplay(){
+    private void setDisplay(){
 
         mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
+                Iterable<DataSnapshot> children = dataSnapshot.child("Hunted").getChildren();
                 String huntedPlayer = children.iterator().next().child("displayName").getValue(String.class);
+                String email = children.iterator().next().getKey();
                 mDisplayField.append(huntedPlayer);
+                User.getInstance().setHuntedEmail(email);
 
             }
 
@@ -127,8 +129,3 @@ public class GamePageFragment extends Fragment {
 
 
 }
-
-
-
-
-

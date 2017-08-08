@@ -53,6 +53,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     private String mEmail, mUsername;
     LocationManager locationManager;
     LocationListener mLocationListener;
+    private int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,13 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
             mapView.onResume();
             mapView.getMapAsync(this);
         }
+
+        if (mEmail == User.getInstance().getHuntedEmail()){
+            sendHuntedLocation();
+        }
+        else{
+           // getHuntedLocation();
+        }
     }
 
     @Override
@@ -113,7 +121,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     public MapPageFragment(){}
 
 
-
     private void sendHuntedLocation() {
 
         final DatabaseReference query = mReference.child("Hunted");
@@ -123,9 +130,10 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
 
             public void run() {
 
-                //TODO send locations
+                query.child(User.getInstance().getHuntedEmail()).child("lat").setValue(++lat);
+                query.child(User.getInstance().getHuntedEmail()).child("lat").setValue(++Long);
 
-                handle.postDelayed(this, 250);
+                handle.postDelayed(this, 1000);
             }
         };
         handle.postDelayed(r, 0);
