@@ -128,7 +128,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
-                buildGoogleApiClient();
+                //buildGoogleApiClient();
                 Gmap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
@@ -136,13 +136,13 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
             }
         }
         else {
-            buildGoogleApiClient();
+            //buildGoogleApiClient();
             Gmap.setMyLocationEnabled(true);
         }
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 15, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
@@ -157,7 +157,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
                         String str = addressList.get(0).getLocality();
                         str += addressList.get(0).getCountryName();
                         Gmap.addMarker(new MarkerOptions().position(latLng).title(str));
-                        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));
+                        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

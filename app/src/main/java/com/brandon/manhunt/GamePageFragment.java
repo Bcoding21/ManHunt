@@ -49,13 +49,23 @@ public class GamePageFragment extends Fragment {
         //Textview
         mDisplayField = v.findViewById(R.id.display_info);
 
-        //set username and email
-        mUsername = User.getInstance().getDisplayName();
-        mEmail = User.getInstance().getEmail();
-
         // set up Firebase
         mDatabase = FirebaseDatabase.getInstance();
         mReference = mDatabase.getReference();
+
+        //set username and email
+        mEmail = User.getInstance().getEmail();
+        mReference.child(mEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUsername = dataSnapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // First time game setup
         if (savedInstanceState == null) {
@@ -85,6 +95,9 @@ public class GamePageFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.hasChild("Hunted")) {
+
+
+                    String name = mUsername;
 
                     User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
@@ -119,7 +132,6 @@ public class GamePageFragment extends Fragment {
                 String email = children.iterator().next().getKey();
                 mDisplayField.append(huntedPlayer);
                 User.getInstance().setHuntedEmail(email);
-
             }
 
             @Override
