@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.brandon.manhunt.GamePageFragment.mHuntedEmail;
+//import static com.brandon.manhunt.GamePageFragment.mHuntedEmail;
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -125,25 +125,16 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         Gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.setIndoorEnabled(true);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                //Location Permission already granted
-                buildGoogleApiClient();
-                Gmap.setMyLocationEnabled(true);
-            } else {
-                //Request Location Permission
-                checkLocationPermission();
-            }
+            checkLocationPermission();
         }
         else {
-            buildGoogleApiClient();
+            //buildGoogleApiClient();
             Gmap.setMyLocationEnabled(true);
         }
 
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+      /*  locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 15, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
@@ -158,7 +149,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
                         String str = addressList.get(0).getLocality();
                         str += addressList.get(0).getCountryName();
                         Gmap.addMarker(new MarkerOptions().position(latLng).title(str));
-                        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));
+                        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -179,7 +170,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
                 }
             });
-        }
+        }*/
 
 
 
@@ -193,7 +184,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
               //  .strokeColor(R.color.colorPrimary)
                 //.fillColor(R.color.colorPrimary));
 
-    }
+   }
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -273,6 +264,10 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public void updateMe() {
 
     }
 }
