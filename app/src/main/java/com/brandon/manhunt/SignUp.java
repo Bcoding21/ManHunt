@@ -85,7 +85,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         else {
             User.getInstance().setName(mDisplayName.getText().toString());
             User.getInstance().setEmail(mEmailField.getText().toString());
-            storeUserName();
 
 
             progress.setMessage("Working..");
@@ -105,6 +104,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 Toast.makeText(SignUp.this, "Sign up complete", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(SignUp.this, MainPage.class);
                                 i.putExtra("name", mDisplayName.getText().toString());
+                                storeUserName();
                                 startActivity(i);
                                 finish();
                             }

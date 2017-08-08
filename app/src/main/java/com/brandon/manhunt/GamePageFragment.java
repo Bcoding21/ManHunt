@@ -87,7 +87,7 @@ public class GamePageFragment extends Fragment {
 
                     User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
                     mReference.child("Hunted").child(mEmail).setValue(newUser);
-                    mDisplayField.setText("YOU ARE BEING HUTNED!");
+                    mDisplayField.setText("YOU ARE BEING HUNTED!");
                     User.getInstance().setIsHunted(true);
 
                 } else if (dataSnapshot.hasChild("Hunted")) {
