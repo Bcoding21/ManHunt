@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/camo"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.brandon.manhunt.SignUp">
@@ -10,25 +11,37 @@
 
     <EditText
         android:id="@+id/display"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white"
         android:hint="Enter your email display name"
+        android:textColor="@android:color/white"
         android:inputType="textAutoComplete"
         android:layout_marginTop="50dp"/>
 
     <EditText
         android:id="@+id/email"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white"
         android:hint="Enter your email address"
+        android:textColor="@android:color/white"
         android:inputType="textEmailAddress"
         android:layout_marginTop="100dp"/>
 
     <EditText
         android:id="@+id/password"
+        android:shadowColor="#000000"
+        android:shadowRadius="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white"
         android:hint="Enter your password"
+        android:textColor="@android:color/white"
         android:inputType="textPassword"
         android:layout_marginTop="100dp"/>
 
