@@ -54,6 +54,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     LocationManager locationManager;
     LocationListener mLocationListener;
     private int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
+    int count = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
                 .radius(100)
                 .strokeColor(R.color.colorPrimary)
                 .fillColor(R.color.colorPrimary));
-
     }
 
 }

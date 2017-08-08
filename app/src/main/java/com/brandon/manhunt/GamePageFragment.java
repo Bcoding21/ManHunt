@@ -50,8 +50,8 @@ public class GamePageFragment extends Fragment {
         mDisplayField = v.findViewById(R.id.display_info);
 
         //set username and email
-        mUsername = User.getInstance().getDisplayName();
         mEmail = User.getInstance().getEmail();
+        setUsername();
 
         // set up Firebase
         mDatabase = FirebaseDatabase.getInstance();
@@ -97,7 +97,7 @@ public class GamePageFragment extends Fragment {
                     User newUser = new User(mUsername, 0.0, 0.0);
                     mReference.child("Hunters").child(mEmail).setValue(newUser);
                     User.getInstance().setIsHunted(false);
-                    setDisplay();
+                    //setDisplay();
 
                 }
             }
@@ -118,7 +118,6 @@ public class GamePageFragment extends Fragment {
                 String email = children.iterator().next().getKey();
                 mDisplayField.append(huntedPlayer);
                 User.getInstance().setHuntedEmail(email);
-
             }
 
             @Override
@@ -126,7 +125,23 @@ public class GamePageFragment extends Fragment {
 
             }
         });
+    }
 
+
+    private void setUsername(){
+
+
+        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUsername = dataSnapshot.child(mEmail).getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
