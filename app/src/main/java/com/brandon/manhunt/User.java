@@ -7,6 +7,7 @@ public class User {
     private double mLong;
     private static User mUser;
     private String mEmail;
+    private boolean mIsHunted;
 
     public User(String mDisplayName, double lat, double Long) {
         this.mDisplayName = mDisplayName;
@@ -15,7 +16,10 @@ public class User {
     }
 
     public static User getInstance(){
-        return (mUser == null) ? new User() : mUser;
+        if (mUser == null){
+            mUser = new User();
+        }
+        return mUser;
     }
 
     public User()
@@ -27,6 +31,10 @@ public class User {
 
     public String getEmail(){
         return mEmail;
+    }
+
+    public void setIsHunted(boolean truth){
+        mIsHunted = truth;
     }
 
     public String getDisplayName() {
@@ -45,7 +53,11 @@ public class User {
         mDisplayName = name;
     }
 
-    public void setEmail(String name){
-        mEmail = name.replace("@", "at").replace(".", "dot");
+    public void setEmail(String email){
+        mEmail = email.replace("@", "at").replace(".", "dot");
+    }
+
+    public boolean isHunted(){
+        return mIsHunted;
     }
 }

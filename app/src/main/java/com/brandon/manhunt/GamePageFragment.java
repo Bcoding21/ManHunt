@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -34,15 +35,11 @@ import java.util.Objects;
 
 public class GamePageFragment extends Fragment {
 
-    private TextView mDisplayField, mClosestHunters;
+    private TextView mDisplayField;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-    private String mCurrentUserEmail, mCurrentUserName, mHuntedEmail;
-    private final int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
-    public static final Handler handle = new Handler();
-    public static Runnable r;
+    private String mUsername, mEmail;
+    public static String mHuntedEmail;
 
     @Nullable
     @Override
@@ -51,31 +48,19 @@ public class GamePageFragment extends Fragment {
 
         //Textview
         mDisplayField = v.findViewById(R.id.display_info);
-        mClosestHunters = v.findViewById(R.id.hunters_list);
 
+        //set username and email
+        mUsername = User.getInstance().getDisplayName();
+        mEmail = User.getInstance().getEmail();
 
-        //Firebase Authentication
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
-        // Firebase Database
+        // set up Firebase
         mDatabase = FirebaseDatabase.getInstance();
         mReference = mDatabase.getReference();
 
-        // set email
-        String unformattedEmail = mUser.getEmail();
-        mCurrentUserEmail = unformattedEmail.replace("@", "at").replace(".", "dot");
-
-
-        // set username
-        Bundle b = getArguments();
-        mCurrentUserName = b.getString("name");
-
         // First time game setup
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             addUser();  // add user as hunted or hunter to firebase
-        }
-        else{
+        } else {
             String displayInfo = savedInstanceState.getString("display");
             mDisplayField.setText(displayInfo);
         }
@@ -93,81 +78,31 @@ public class GamePageFragment extends Fragment {
 
     private void addUser() {
 
-        DatabaseReference query = mReference.child("Hunted");
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (!dataSnapshot.exists()) {
-
-                    User newUser = new User(mCurrentUserName, 0.0, 0.0); // longtitude/lattitude
-                    mReference.child("Hunted").child(mCurrentUserEmail).setValue(newUser);
+                if (!dataSnapshot.hasChild("Hunted")) {
+                    User newUser = new User(mUsername, 0.0, 0.0); // longtitude/lattitude
+                    mReference.child("Hunted").child(mEmail).setValue(newUser);
                     mDisplayField.setText("You are being hunted");
-                    sendHuntedLocation();
+                    User.getInstance().setIsHunted(true);
 
-
-                } else if (dataSnapshot.exists()) {
-
-                    User newUser = new User(mCurrentUserName, 0.0, 0.0);
-                    mReference.child("Hunters").child(mCurrentUserEmail).setValue(newUser);
-                    Map<String, Objects> myMap = (HashMap)dataSnapshot.getValue();
-                    for (String key : myMap.keySet()){
-                        mHuntedEmail= key;
-                    }
-                    receiveHuntedLocation();
-
+                } else if (dataSnapshot.hasChild("Hunted")) {
+                    User newUser = new User(mUsername, 0.0, 0.0);
+                    mReference.child("Hunters").child(mEmail).setValue(newUser);
+                    User.getInstance().setIsHunted(false);
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
 
-    private void   receiveHuntedLocation(){
-        DatabaseReference query = mReference.child("Hunted").child(mHuntedEmail);
-
-        query.addValueEventListener(new ValueEventListener() {
-            double lat = 0;
-            double Longit = 0;
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                lat = (double)dataSnapshot.child("lat").getValue();
-                Longit = (double)dataSnapshot.child("long").getValue();
-
-                mClosestHunters.setText("LONG: " + Longit + "\n LAT: " + lat);
-            }
 
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void sendHuntedLocation() {
-
-             final DatabaseReference query = mReference.child("Hunted");
-             r = new Runnable() {
-                 double lat = 0.1;
-                double Long = 0.1;
-
-                public void run() {
-                    query.child(mCurrentUserEmail).child("lat").setValue(++lat);
-                    query.child(mCurrentUserEmail).child("long").setValue(++Long);
-                    handle.postDelayed(this, 250);
-                }
-            };
-            handle.postDelayed(r, 0);
-    }
 
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handle.removeCallbacks(r);
-    }
 }

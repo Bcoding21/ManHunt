@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -30,7 +31,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import static android.content.Context.LOCATION_SERVICE;
+import static com.brandon.manhunt.GamePageFragment.mHuntedEmail;
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -40,6 +46,11 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     GoogleMap Gmap;
     View mView;
+    public Handler handle = new Handler();
+    private Runnable r;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mReference;
+    private String mEmail, mUsername;
     LocationManager locationManager;
     LocationListener mLocationListener;
 
@@ -52,6 +63,14 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Gets the MapView from the XML layout and creates it
         mView = inflater.inflate(R.layout.fragment_map_page, container, false);
+
+        //Firebase
+        mDatabase = FirebaseDatabase.getInstance();
+        mReference = mDatabase.getReference();
+
+        // setup email and username
+        mEmail = User.getInstance().getEmail();
+        mUsername = User.getInstance().getDisplayName();
 
         return mView;
     }
@@ -89,9 +108,82 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback {
                 .strokeColor(R.color.colorPrimary)
                 .fillColor(R.color.colorPrimary));
 
-
+        if (User.getInstance().isHunted()){
+            sendHuntedLocation();
+        }
+        else{
+           // receiveHuntedLocation();
+        }
     }
 
     public MapPageFragment(){}
+
+    private void receiveHuntedLocation(){
+
+       // getHuntedEmail();
+
+        String name = mHuntedEmail;
+        DatabaseReference query = mReference.child("Hunted").child(name);
+
+        query.addValueEventListener(new ValueEventListener() {
+            double lat = 0;
+            double Longit = 0;
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lat = (double)dataSnapshot.child("lat").getValue();
+                Longit = (double)dataSnapshot.child("long").getValue();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void sendHuntedLocation() {
+
+        final DatabaseReference query = mReference.child("Hunted");
+        r = new Runnable() {
+            double lat = 0.1;
+            double Long = 0.1;
+
+            public void run() {
+
+                //TODO send locations
+
+                handle.postDelayed(this, 250);
+            }
+        };
+        handle.postDelayed(r, 0);
+    }
+
+
+    private void getHuntedEmail(){
+
+        DatabaseReference query = mReference.child("Hunted");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    Map<String, Objects> myMap = (HashMap) dataSnapshot.getValue();
+                    for (String key : myMap.keySet()) {
+                        mHuntedEmail = key;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handle.removeCallbacks(r);
+    }
+
 
 }
