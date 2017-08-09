@@ -224,6 +224,16 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
+    public void updateMap(double Latitude, double Longitude){
+
+         // TODO
+        /* This function is called every 30 seconds by another function outside this class.
+        * Write code for updating the map in here*/
+
+
+    }
+
+
     //googleMap.addMarker(new MarkerOptions().position(new LatLng(37.42011307755486, -122.08767384446583)));
     // googleMap.addMarker(new MarkerOptions().position(latLng));
     //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.42011307755486, -122.08767384446583),17.2f));

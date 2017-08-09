@@ -164,7 +164,7 @@ public class gamePage extends AppCompatActivity {
                 Lat = dataSnapshot.child("lat").getValue(Double.class);
                 Long = dataSnapshot.child("long").getValue(Double.class);
 
-                GamePageFragment.getInstance().recieveLocation(Lat, Long);
+                MapPageFragment.getInstance().updateMap(Lat, Long);
             }
 
             @Override
