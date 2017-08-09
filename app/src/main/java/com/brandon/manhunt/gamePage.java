@@ -178,7 +178,7 @@ public class gamePage extends AppCompatActivity {
         mReference.child("Hunted").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mHuntedEmail = dataSnapshot.child("displayName").getValue(String.class);
+                mHuntedEmail = dataSnapshot.child("email").getValue(String.class);
                 setHuntedName();
             }
 
@@ -190,13 +190,11 @@ public class gamePage extends AppCompatActivity {
     }
 
     private void setHuntedName(){
-        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.child("Username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot data = dataSnapshot.child("Username");
-                DataSnapshot data2 = data.child(mHuntedEmail);
-                String data3 = (String) data2.getValue();
-                mHuntedUsername = data3;
+                String name = (String)dataSnapshot.child(mHuntedEmail).getValue();
+                mHuntedUsername = name;
 
                 String s = "You are hunting: " + mHuntedUsername;
                 GamePageFragment.getInstance().getInformation(s);
@@ -243,6 +241,4 @@ public class gamePage extends AppCompatActivity {
             }
         }
     }
-
-
 }
