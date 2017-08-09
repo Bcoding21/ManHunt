@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.brandon.manhunt.MapPageFragment.MY_PERMISSIONS_REQUEST_LOCATION;
+
 
 /**
  * Created by brandoncole on 8/1/17.
@@ -54,24 +54,19 @@ import static com.brandon.manhunt.MapPageFragment.MY_PERMISSIONS_REQUEST_LOCATIO
 
 public class GamePageFragment extends Fragment {
 
+    private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField;
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
-    private String mUsername, mEmail;
-    private LocationManager locationManager;
-    private int THIRTY_SECONDS = 30000;
 
+    public static GamePageFragment getInstance(){
+        if (mGamePageFragment == null){
+            mGamePageFragment = new GamePageFragment();
+        }
+        return mGamePageFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // set up Firebase
-        mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference();
-
-        //set username and email
-        mEmail = User.getInstance().getEmail();
     }
 
     @Nullable
@@ -84,11 +79,12 @@ public class GamePageFragment extends Fragment {
 
 
         if (savedInstanceState == null) {
-            addUser();
+
         }
         else{
             String display = savedInstanceState.getString("display");
             mDisplayField.setText(display);
+
         }
         return v;
     }
@@ -101,149 +97,8 @@ public class GamePageFragment extends Fragment {
         outState.putString("display", display);
     }
 
-    private void addUser(){
 
-        mReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("Hunted")){
-
-                    String name = "N/A";
-                    User user = new User(name, 0, 0);
-                    mReference.child("Hunters").child(mEmail).setValue(user);
-
-                    mReference.child("HuntedEmail").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            String email = dataSnapshot.getValue(String.class);
-
-                            mReference.child("Username").child(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    mDisplayField.append(dataSnapshot.getValue(String.class));
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                }
-                else if (!dataSnapshot.hasChild("Hunted")){
-
-                    String name = "N/A";
-                    User user = new User(name, 0, 0);
-                    mReference.child("Hunted").child(mEmail).setValue(user);
-                    mReference.child("HuntedEmail").setValue(mEmail);
-                    mDisplayField.setText("YOU ARE BEING HUNTED");
-                    sendLocation();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    public void getInformation(String s){
+        mDisplayField.setText(s);
     }
-
-
-
-
-    private void sendLocation(){
-
-
-
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            //Location Permission already granted
-            //buildGoogleApiClient();
-
-        } else {
-            //Request Location Permission
-            checkLocationPermission();
-        }
-
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, THIRTY_SECONDS / 30, 0f, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    //get the latitude
-                    double longitude = location.getLongitude();
-                    //get the longitude
-                    LatLng latLng = new LatLng (latitude, longitude);
-                    //Instantiate the class, Geocoder
-
-                    mReference.child("Hunted").child(mEmail).child("lat").setValue(latitude);
-                    mReference.child("Hunted").child(mEmail).child("long").setValue(longitude);
-
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-            });
-        }
-    }
-
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
-                            }
-                        })
-                        .create()
-                        .show();
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
-            }
-        }
-    }
-
 }

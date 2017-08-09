@@ -13,32 +13,49 @@ import java.util.List;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    public SectionsPagerAdapter(FragmentManager fm) {
-        super(fm);
-    }
+    String[] tabNames = {"1", ",2", "3"};
 
-    private final List<Fragment> mFragList = new ArrayList<>();
-    private final List<String> mFragTitleList = new ArrayList<>();
-
-    public void addFrag(Fragment f, String title){
-        mFragList.add(f);
-        mFragTitleList.add(title);
+    public SectionsPagerAdapter(FragmentManager manager) {
+        super(manager);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragList.get(position);
+        switch (position){
+            case 0:
+                return GamePageFragment.getInstance();
+
+            case 1:
+                return MapPageFragment.getInstance();
+
+            case 2:
+                return QuitPageFragment.getInstance();
+
+        }
+        return null;
     }
 
     @Override
     public int getCount() {
-        return  mFragList.size();
+        return 3;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mFragTitleList.get(position);
+        switch (position){
 
+            case 0:
+                return "One";
+
+
+            case 1:
+                return "Two";
+
+
+            case 2:
+                return "Three";
+        }
+        return null;
     }
 }
 

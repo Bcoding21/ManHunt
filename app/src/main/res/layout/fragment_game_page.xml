@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/game_page_frag">
 
     <TextView
         android:id="@+id/display_info"
