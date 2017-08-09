@@ -1,22 +1,10 @@
 package com.brandon.manhunt;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,27 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 
 
@@ -55,7 +22,7 @@ import java.util.Set;
 public class GamePageFragment extends Fragment {
 
     private static GamePageFragment mGamePageFragment;
-    private TextView mDisplayField;
+    private TextView mDisplayField, mHuntersLocationField;
 
     public static GamePageFragment getInstance(){
         if (mGamePageFragment == null){
@@ -76,15 +43,14 @@ public class GamePageFragment extends Fragment {
 
         //Textview
         mDisplayField = v.findViewById(R.id.display_info);
+        mHuntersLocationField = v.findViewById(R.id.hunters_location);
 
 
-        if (savedInstanceState == null) {
-
-        }
-        else{
+       if (savedInstanceState != null){
             String display = savedInstanceState.getString("display");
+            String display2 = savedInstanceState.getString("display2");
             mDisplayField.setText(display);
-
+            mHuntersLocationField.setText(display2);
         }
         return v;
     }
@@ -94,11 +60,18 @@ public class GamePageFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         String display = mDisplayField.getText().toString();
+        String display2 = mHuntersLocationField.getText().toString();
+
+        outState.putString("display2", display2);
         outState.putString("display", display);
     }
 
 
     public void getInformation(String s){
         mDisplayField.setText(s);
+    }
+
+    public void recieveLocation(double Lat, double Long){
+        mHuntersLocationField.setText("LAT: " + Lat + " \n LONG: " + Long);
     }
 }

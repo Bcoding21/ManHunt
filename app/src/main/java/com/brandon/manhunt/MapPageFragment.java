@@ -110,14 +110,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         // Gets the MapView from the XML layout and creates it
         mView = inflater.inflate(R.layout.fragment_map_page, container, false);
 
-        //Firebase
-        mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference();
-
-        // setup email and username
-        mEmail = User.getInstance().getEmail();
-        mUsername = User.getInstance().getDisplayName();
-
         return mView;
     }
 
@@ -150,17 +142,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         }
    }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateMe();
-    }
-
-    public void updateMap(double Lat, double Long){
-
-    }
-
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -168,43 +149,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
-    }
-
-
-    public void updateMe() {
-
-        mReference.child("HuntedEmail").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mHuntedEmail = dataSnapshot.getValue(String.class);
-
-                String email = mEmail;
-                String email2 = mHuntedEmail;
-
-                if (!User.getInstance().isHunted()){
-
-                    mReference.child("Hunted").child(mEmail).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            inLat = (Long)dataSnapshot.child("lat").getValue();
-                            inLong = (Long)dataSnapshot.child("long").getValue();
-                            Log.d("Coordinates", "Lat: " + inLat + "Long: " + inLong);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
 
