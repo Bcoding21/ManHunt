@@ -9,34 +9,16 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -140,8 +122,6 @@ public class gamePage extends AppCompatActivity {
             checkLocationPermission();
         }
 
-
-
         mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -205,7 +185,6 @@ public class gamePage extends AppCompatActivity {
                     location.setLatitude(mLatitude);
                     location.setLongitude(mLongitude);
 
-                    GamePageFragment.getInstance().getInformation("You are hunted: " + mHuntedUsername);
                     GamePageFragment.getInstance().recieveLocation(location);
                     MapPageFragment.getInstance().updateMap(mLatitude, mLongitude);
                 }
@@ -347,19 +326,6 @@ public class gamePage extends AppCompatActivity {
     private void endGame(){
 
 
-        locationManager.removeUpdates(mLocationListener);
-
-        if (mCurrentUserEmail.equals(mHuntedEmail)) { // if hunted
-            GamePageFragment.getInstance().getInformation("YOU HAVE BEEN CAUGHT \n GAME OVER!");
-            mReference.child("Hunted").setValue(null);
-        }
-
-        else{
-            GamePageFragment.getInstance().getInformation("THE HUNTED HAS BEEN CAUGHT \n GAME OVER!");
-            mReference.child("Hunters").child(mCurrentUserEmail).setValue(null);
-        }
-
-
         new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long l) {
@@ -368,6 +334,16 @@ public class gamePage extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                if (mCurrentUserEmail.equals(mHuntedEmail)) { // if hunted
+                    GamePageFragment.getInstance().getInformation("YOU HAVE BEEN CAUGHT \n GAME OVER!");
+                    mReference.child("Hunted").setValue(null);
+                }
+
+                else{
+                    GamePageFragment.getInstance().getInformation("THE HUNTED HAS BEEN CAUGHT \n GAME OVER!");
+                    mReference.child("Hunters").child(mCurrentUserEmail).setValue(null);
+                }
+
                 startActivity(new Intent(gamePage.this, MainPage.class));
             }
         }.start();
