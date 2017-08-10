@@ -30,6 +30,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,6 +39,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class gamePage extends AppCompatActivity {
 
@@ -48,7 +54,8 @@ public class gamePage extends AppCompatActivity {
     private String mHuntedEmail, mCurrentUserEmail, mHuntedUsername;
     private LocationManager locationManager;
     private long THIRTY_SECONDS = 30000;
-    private double Long, Lat;
+    private double mLongitude, mLatitude;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,7 @@ public class gamePage extends AppCompatActivity {
 
         // set Up location
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Firebase
         mReference = FirebaseDatabase.getInstance().getReference();
@@ -81,22 +89,20 @@ public class gamePage extends AppCompatActivity {
         mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild("Hunted")){
+                if (!dataSnapshot.hasChild("Hunted")){  // if user is being hunted
 
-                    String email = User.getInstance().getEmail();
-                    User user = new User(email, 0, 0);
+                    User user = new User(mCurrentUserEmail, 0, 0);
                     mReference.child("Hunted").setValue(user);
                     passInfoToGameFragment(true);
-                    sendLocation();
                 }
 
-                else if (dataSnapshot.hasChild("Hunted")){
+                else if (dataSnapshot.hasChild("Hunted")){ // if user is a hunter
 
-                    String email = User.getInstance().getEmail();
-                    User user = new User(email, 0, 0);
-                    mReference.child("Hunters").child(email).setValue(user);
+
+                    User user = new User(mCurrentUserEmail, 0, 0);
+                    mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
                     passInfoToGameFragment(false);
-                    getLocation();
+                    getHuntedLocation();
                 }
             }
 
@@ -110,23 +116,26 @@ public class gamePage extends AppCompatActivity {
     private void passInfoToGameFragment(boolean isHunted){
 
         if (isHunted) {
+            sendLocation(isHunted);
             String s = "YOU ARE BEING HUNTED!";
             GamePageFragment.getInstance().getInformation(s);
+
         }
         else{
+            sendLocation(isHunted);
             getHuntedInformation();
         }
     }
 
-    private void sendLocation() {
+    private void sendLocation(final boolean isHunted) {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, THIRTY_SECONDS / 30, 0, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 7000, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
@@ -134,8 +143,19 @@ public class gamePage extends AppCompatActivity {
                     double longitude = location.getLongitude();
                     //get the longitude
 
-                    mReference.child("Hunted").child("lat").setValue(latitude);
-                    mReference.child("Hunted").child("long").setValue(longitude);
+                    String name1 = mCurrentUserEmail;
+                    String name2 = mHuntedEmail;
+
+                    if (isHunted){
+                        mReference.child("Hunted").child("lat").setValue(latitude);
+                        mReference.child("Hunted").child("long").setValue(longitude);
+                        getHuntersLocation(latitude, longitude);
+                    }
+                    else{
+                        mReference.child("Hunters").child(mCurrentUserEmail).child("lat").setValue(latitude);
+                        mReference.child("Hunters").child(mCurrentUserEmail).child("long").setValue(longitude);
+                    }
+
                 }
 
                 @Override
@@ -156,15 +176,21 @@ public class gamePage extends AppCompatActivity {
         }
     }
 
-    private void getLocation() {
+    private void getHuntedLocation() {
 
         mReference.child("Hunted").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Lat = dataSnapshot.child("lat").getValue(Double.class);
-                Long = dataSnapshot.child("long").getValue(Double.class);
 
-                MapPageFragment.getInstance().updateMap(Lat, Long);
+                mLatitude = dataSnapshot.child("lat").getValue(Double.class);
+                mLongitude = dataSnapshot.child("long").getValue(Double.class);
+
+                Location location = new Location("");
+                location.setLatitude(mLatitude);
+                location.setLongitude(mLongitude);
+
+                GamePageFragment.getInstance().recieveLocation(location);
+                MapPageFragment.getInstance().updateMap(location);
             }
 
             @Override
@@ -173,6 +199,46 @@ public class gamePage extends AppCompatActivity {
             }
         });
     }
+
+    private void getHuntersLocation(final double Latit, final double Longit){
+
+        mReference.child("Hunters").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    List<Location> location_list = new ArrayList<>();
+
+                    Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                    Iterator<DataSnapshot> snap = data.iterator();
+
+                    while (snap.hasNext()) {
+
+                        DataSnapshot location = snap.next();
+                        mLatitude = location.child("lat").getValue(Double.class);
+                        mLongitude = location.child("long").getValue(Double.class);
+
+                        Location user_location = new Location("");
+                        user_location.setLatitude(mLatitude);
+                        user_location.setLongitude(mLongitude);
+
+                        location_list.add(user_location);
+                    }
+
+                    GamePageFragment.getInstance().getHuntersInformation(location_list, Latit, Longit);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
 
     private void getHuntedInformation(){
         mReference.child("Hunted").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -241,4 +307,6 @@ public class gamePage extends AppCompatActivity {
             }
         }
     }
+
+
 }

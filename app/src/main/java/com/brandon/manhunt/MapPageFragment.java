@@ -224,6 +224,8 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     public void updateMap(double Latitude, double Longitude){
 checkLocationPermission();
          // TODO
+
+
         /* This function is called every 30 seconds by another function outside this class.
         * Write code for updating the map in here*/
         buildGoogleApiClient();
@@ -253,7 +255,6 @@ checkLocationPermission();
     }
 
 
-
     public Location getLocation(){
         double lat = location.getLatitude();
         double lon = location.getLongitude();
@@ -261,6 +262,7 @@ checkLocationPermission();
         latlng.setLatitude(lat);
         latlng.setLongitude(lon);
         return latlng;
+
     }
 
 

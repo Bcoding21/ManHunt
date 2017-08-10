@@ -1,6 +1,7 @@
 package com.brandon.manhunt;
 
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -12,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import java.util.List;
 
 
 /**
@@ -71,7 +72,22 @@ public class GamePageFragment extends Fragment {
         mDisplayField.setText(s);
     }
 
-    public void recieveLocation(double Lat, double Long){
-        mHuntersLocationField.setText("LAT: " + Lat + " \n LONG: " + Long);
+    public void recieveLocation(Location location){
+        mHuntersLocationField.setText("LAT: " + location.getLatitude() + " \n LONG: " + location.getLongitude() + "\n");
     }
+
+    public void getHuntersInformation(List<Location> location, double currentLat, double currentLong){
+        Location currentLocation = new Location("");
+        currentLocation.setLatitude(currentLat);
+        currentLocation.setLongitude(currentLong);
+
+        double smallestDistance = location.get(0).distanceTo(currentLocation);
+
+        for (int i = 0; i < location.size(); i++){
+            smallestDistance = location.get(i).distanceTo(currentLocation);
+        }
+
+        mHuntersLocationField.setText("The closest hunter is " + smallestDistance + "meters away");
+    }
+
 }
