@@ -243,6 +243,4 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     //  .strokeColor(R.color.colorPrimary)
     //.fillColor(R.color.colorPrimary));
 
-
-
 }

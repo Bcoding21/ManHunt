@@ -55,7 +55,7 @@ public class gamePage extends AppCompatActivity {
     private LocationManager locationManager;
     private long THIRTY_SECONDS = 30000;
     private double mLongitude, mLatitude;
-    private FusedLocationProviderClient mFusedLocationClient;
+    ValueEventListener mHuntedLocationListener, mHuntersLocationListener, mGameOverListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class gamePage extends AppCompatActivity {
 
         // set Up location
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
 
         //Firebase
         mReference = FirebaseDatabase.getInstance().getReference();
@@ -86,6 +86,8 @@ public class gamePage extends AppCompatActivity {
     }
 
     private void startSession(){
+
+        mReference.child("GameOver").setValue(false);
         mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -94,6 +96,7 @@ public class gamePage extends AppCompatActivity {
                     User user = new User(mCurrentUserEmail, 0, 0);
                     mReference.child("Hunted").setValue(user);
                     passInfoToGameFragment(true);
+                    listenForGameOver();
                 }
 
                 else if (dataSnapshot.hasChild("Hunted")){ // if user is a hunter
@@ -103,6 +106,7 @@ public class gamePage extends AppCompatActivity {
                     mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
                     passInfoToGameFragment(false);
                     getHuntedLocation();
+                    listenForGameOver();
                 }
             }
 
@@ -155,7 +159,6 @@ public class gamePage extends AppCompatActivity {
                         mReference.child("Hunters").child(mCurrentUserEmail).child("lat").setValue(latitude);
                         mReference.child("Hunters").child(mCurrentUserEmail).child("long").setValue(longitude);
                     }
-
                 }
 
                 @Override
@@ -177,8 +180,7 @@ public class gamePage extends AppCompatActivity {
     }
 
     private void getHuntedLocation() {
-
-        mReference.child("Hunted").addValueEventListener(new ValueEventListener() {
+        mHuntedLocationListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -197,12 +199,16 @@ public class gamePage extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        mReference.child("Hunted").addValueEventListener(mHuntedLocationListener);
     }
 
     private void getHuntersLocation(final double Latit, final double Longit){
 
-        mReference.child("Hunters").addValueEventListener(new ValueEventListener() {
+
+        mHuntersLocationListener = new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -234,7 +240,9 @@ public class gamePage extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        mReference.addValueEventListener(mHuntersLocationListener);
 
     }
 
@@ -308,5 +316,28 @@ public class gamePage extends AppCompatActivity {
         }
     }
 
+    private void listenForGameOver(){
+
+        mGameOverListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                endGame();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        mReference.child("GameState").addValueEventListener(mGameOverListener);
+    }
+
+
+    private void endGame(){
+        mReference.removeEventListener(mHuntersLocationListener);
+        mReference.removeEventListener(mHuntedLocationListener);
+        mReference.removeEventListener(mGameOverListener);
+    }
 
 }
