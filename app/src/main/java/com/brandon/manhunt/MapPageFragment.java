@@ -224,12 +224,11 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-    public void updateMap(double Latitude, double Longitude){
+    public void updateMap(Location location){
 
-         // TODO
+        // TODO
         /* This function is called every 30 seconds by another function outside this class.
         * Write code for updating the map in here*/
-
 
     }
 
