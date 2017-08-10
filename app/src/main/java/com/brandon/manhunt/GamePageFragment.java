@@ -13,6 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -24,6 +29,7 @@ public class GamePageFragment extends Fragment {
 
     private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField, mHuntersLocationField;
+    private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
 
     public static GamePageFragment getInstance(){
         if (mGamePageFragment == null){
@@ -78,6 +84,7 @@ public class GamePageFragment extends Fragment {
     }
 
     public void getHuntersInformation(List<Location> location, double currentLat, double currentLong){
+
         Location currentLocation = new Location("");
         currentLocation.setLatitude(currentLat);
         currentLocation.setLongitude(currentLong);
@@ -88,7 +95,27 @@ public class GamePageFragment extends Fragment {
             smallestDistance = location.get(i).distanceTo(currentLocation);
         }
 
-        mHuntersLocationField.setText("The closest hunter is " + smallestDistance + "meters away");
+
+        DecimalFormat numberFormat = new DecimalFormat();
+        numberFormat.setRoundingMode(RoundingMode.CEILING);
+        numberFormat.setMaximumFractionDigits(2);
+        numberFormat.setMinimumFractionDigits(0);
+        numberFormat.format(smallestDistance);
+
+        if (smallestDistance < 20.00){
+            mReference.child("GAMEOVER").setValue(true);
+        }
+        else if (smallestDistance < 5.00){
+            mHuntersLocationField.setText("Hunters are coming!");
+        }
+        else{
+            mHuntersLocationField.setText("The closest hunter is " + smallestDistance + " meters away");
+        }
+
+    }
+
+    public void setSecondDisplay(String s){
+        mHuntersLocationField.setText(s);
     }
 
 }
