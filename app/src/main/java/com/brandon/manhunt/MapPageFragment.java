@@ -70,6 +70,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     MapView mapView;
     GoogleMap Gmap;
     View mView;
+    private Circle circle;
 
     TextView test;
 
@@ -230,20 +231,20 @@ checkLocationPermission();
         * Write code for updating the map in here*/
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
+        if (circle != null) {
+            circle.remove();
         }
 
         double newLat = Latitude + (Math.random()*.001)-.001;
         //get the latitude
         double newLong =  Longitude + (Math.random()*.001)-.001;
         //get the longitude
-        //LatLng OlatLng = new LatLng (Latitude, Longitude);
-        //Gmap.addMarker(new MarkerOptions().position(OlatLng));
+        LatLng OlatLng = new LatLng (Latitude, Longitude);
+        ;
         LatLng latLng = new LatLng (newLat, newLong);
-        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-                    mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        Circle circle = Gmap.addCircle(new CircleOptions()
+        //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+                    //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+        circle = Gmap.addCircle(new CircleOptions()
                      .center(latLng)
                     .radius(100)
                   .strokeColor(R.color.colorAccent)
