@@ -190,7 +190,7 @@ public class gamePage extends AppCompatActivity {
                 location.setLongitude(mLongitude);
 
                 GamePageFragment.getInstance().recieveLocation(location);
-                MapPageFragment.getInstance().updateMap(location);
+                MapPageFragment.getInstance().updateMap(mLatitude, mLongitude);
             }
 
             @Override
