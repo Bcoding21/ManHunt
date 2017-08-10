@@ -107,7 +107,7 @@ public class gamePage extends AppCompatActivity {
             sendLocation(isHunted);
             String s = "YOU ARE BEING HUNTED!";
             GamePageFragment.getInstance().getInformation(s);
-            listenForGameOver();
+            //listenForGameOver();
 
         }
         else{
@@ -261,7 +261,7 @@ public class gamePage extends AppCompatActivity {
 
                 String s = "You are hunting: " + mHuntedUsername;
                 GamePageFragment.getInstance().getInformation(s);
-                listenForGameOver();
+               // listenForGameOver();
             }
 
 
