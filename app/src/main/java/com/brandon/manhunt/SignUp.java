@@ -83,10 +83,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             Toast.makeText(this, "Please fill each field", Toast.LENGTH_SHORT).show();
         }
         else {
-            User.getInstance().setName(mDisplayName.getText().toString());
-            User.getInstance().setEmail(mEmailField.getText().toString());
-
-
             progress.setMessage("Working..");
             progress.show();
 
@@ -103,7 +99,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 progress.cancel();
                                 Toast.makeText(SignUp.this, "Sign up complete", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(SignUp.this, MainPage.class);
-                                i.putExtra("name", mDisplayName.getText().toString());
                                 storeUserName();
                                 startActivity(i);
                                 finish();
@@ -122,7 +117,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         User.getInstance().setEmail(email);
         String dEmail = User.getInstance().getEmail();
-        User.getInstance().setName(username);
 
         ref.child("Username").child(dEmail).setValue(username);
     }

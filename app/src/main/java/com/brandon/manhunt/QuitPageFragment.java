@@ -13,6 +13,15 @@ import android.view.ViewGroup;
 
 public class QuitPageFragment extends Fragment {
 
+    private static QuitPageFragment mQuitPageFragment;
+
+    public static QuitPageFragment getInstance(){
+        if (mQuitPageFragment == null){
+            mQuitPageFragment = new QuitPageFragment();
+        }
+        return mQuitPageFragment;
+    }
+
     private static final String TAG = "FRAGMENT_QUIT_PAGE";
     @Nullable
     @Override

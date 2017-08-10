@@ -23,49 +23,56 @@ import com.google.firebase.database.ValueEventListener;
 public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
     TextView mWelcome;
-    private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private String mUserName;
+    private DatabaseReference mReference;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
-
-        //Firebase
+        // Firebase
+        mReference = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
         // TextView
         mWelcome = (TextView) findViewById(R.id.display);
-        findViewById(R.id.log_out).setOnClickListener(this);
-        findViewById(R.id.delete_acc).setOnClickListener(this);
-        findViewById(R.id.play_game).setOnClickListener(this);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference();
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String email = User.getInstance().getEmail();
-                String username = (String)dataSnapshot.child(email).getValue();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        mWelcome.append("\n" + mUserName);
-
-        //Buttons
+        // Buttons
         findViewById(R.id.log_out).setOnClickListener(this);
         findViewById(R.id.delete_acc).setOnClickListener(this);
         findViewById(R.id.play_game).setOnClickListener(this);
 
         // Listens for sign in/sign out
+        signOutCheck();
+    }
+
+
+
+    public void onClick(View v){
+        switch (v.getId()){
+
+            case R.id.play_game:
+                Intent i = new Intent(MainPage.this, gamePage.class);
+                startActivity(i);
+                break;
+
+            case R.id.delete_acc:
+                deleteAccount();
+                break;
+
+            case R.id.log_out:
+                mAuth.getInstance().signOut();
+                startActivity(new Intent(MainPage.this, MainActivity.class));
+                break;
+        }
+    }
+
+    private void signOutCheck(){
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -81,48 +88,38 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         };
     }
 
-    public void onClick(View v){
-        switch (v.getId()){
+    private void deleteAccount(){
 
-            case R.id.play_game:
-                Intent i = new Intent(MainPage.this, gamePage.class);
-                i.putExtra("name", mUserName);
-                startActivity(i);
-                break;
+        mUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainPage.this, R.string.delete_account_success,
+                            Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainPage.this, MainActivity.class));
 
-            case R.id.delete_acc:
-                FirebaseUser user = mAuth.getCurrentUser();
-
-                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainPage.this, "Logged out", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                break;
-
-            case R.id.log_out:
-                mAuth.getInstance().signOut();
-                startActivity(new Intent(MainPage.this, MainActivity.class));
-                break;
-        }
+                } else if (!task.isSuccessful()){
+                    Toast.makeText(MainPage.this, R.string.delete_account_fail,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    private void getUsername(){
-        final FirebaseDatabase data = FirebaseDatabase.getInstance();
-        DatabaseReference ref = data.getReference();
+    private void setDisplay(){
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        String email = User.getInstance().getEmail();
+
+        mReference.child(email).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               String email = User.getInstance().getEmail();
-                String username = (String)dataSnapshot.child(email).getValue();
-                mUserName = username;
+                String username = (String)dataSnapshot.getValue();
+                mWelcome.setText("Welcome " + username);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Not working", Toast.LENGTH_LONG).show();
+
             }
         });
 

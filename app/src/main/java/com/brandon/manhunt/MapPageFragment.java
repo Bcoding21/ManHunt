@@ -19,9 +19,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -67,14 +70,17 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     MapView mapView;
     GoogleMap Gmap;
     View mView;
+    TextView test;
 
+    private static MapPageFragment mMapPageFragment;
     public Handler handle = new Handler();
     private Runnable r;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
-    private String mEmail, mUsername;
+    private String mEmail, mUsername, mHuntedEmail;
     LocationManager locationManager;
     LocationListener mLocationListener;
+
     private int ONE_MINUTE = 60000, THIRTY_SECONDS = 30000;
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
@@ -82,6 +88,9 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    private boolean isUserHunted;
+    private Long inLat, inLong;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
 
     @Override
@@ -89,18 +98,17 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         super.onCreate(savedInstanceState);
     }
 
+    public static MapPageFragment getInstance(){
+        if (mMapPageFragment == null){
+            mMapPageFragment = new MapPageFragment();
+        }
+        return mMapPageFragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Gets the MapView from the XML layout and creates it
         mView = inflater.inflate(R.layout.fragment_map_page, container, false);
-
-        //Firebase
-        mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference();
-
-        // setup email and username
-        mEmail = User.getInstance().getEmail();
-        mUsername = User.getInstance().getDisplayName();
 
         return mView;
     }
@@ -128,63 +136,12 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
             checkLocationPermission();
         }
         else {
-            //buildGoogleApiClient();
+            buildGoogleApiClient();
             Gmap.setMyLocationEnabled(true);
+
         }
-
-      /*  locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 15, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    //get the latitude
-                    double longitude = location.getLongitude();
-                    //get the longitude
-                    LatLng latLng = new LatLng (latitude, longitude);
-                    //Instantiate the class, Geocoder
-                    Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
-                    try {
-                        List<Address> addressList = geocoder.getFromLocation(latitude, longitude, 1);
-                        String str = addressList.get(0).getLocality();
-                        str += addressList.get(0).getCountryName();
-                        Gmap.addMarker(new MarkerOptions().position(latLng).title(str));
-                        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20f));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-            });
-        }*/
-
-
-
-        //googleMap.addMarker(new MarkerOptions().position(new LatLng(37.42011307755486, -122.08767384446583)));
-       // googleMap.addMarker(new MarkerOptions().position(latLng));
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.42011307755486, -122.08767384446583),17.2f));
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng),17.2f));
-        //Circle circle = googleMap.addCircle(new CircleOptions()
-          //     .center(latLng)
-            //    .radius(100)
-              //  .strokeColor(R.color.colorPrimary)
-                //.fillColor(R.color.colorPrimary));
-
    }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -193,7 +150,8 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
                 .build();
         mGoogleApiClient.connect();
     }
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -230,10 +188,8 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
-
 
     }
 
@@ -267,7 +223,26 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-    public void updateMe() {
+
+    public void updateMap(Location location){
+
+        // TODO
+        /* This function is called every 30 seconds by another function outside this class.
+        * Write code for updating the map in here*/
 
     }
+
+
+    //googleMap.addMarker(new MarkerOptions().position(new LatLng(37.42011307755486, -122.08767384446583)));
+    // googleMap.addMarker(new MarkerOptions().position(latLng));
+    //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.42011307755486, -122.08767384446583),17.2f));
+    //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng),17.2f));
+    //Circle circle = googleMap.addCircle(new CircleOptions()
+    //     .center(latLng)
+    //    .radius(100)
+    //  .strokeColor(R.color.colorPrimary)
+    //.fillColor(R.color.colorPrimary));
+
+
+
 }

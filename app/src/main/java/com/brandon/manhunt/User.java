@@ -2,19 +2,14 @@ package com.brandon.manhunt;
 
 
 public class User {
-    private String mDisplayName;
+    private static User mUser;
+
     private double mLat;
     private double mLong;
-    private static User mUser;
+
     private String mEmail;
     private boolean mIsHunted;
     private String mHuntedEmail;
-
-    public User(String mDisplayName, double lat, double Long) {
-        this.mDisplayName = mDisplayName;
-        mLat = lat;
-        mLong = Long;
-    }
 
     public static User getInstance(){
         if (mUser == null){
@@ -23,23 +18,22 @@ public class User {
         return mUser;
     }
 
+    public User(String email, double lat, double Long) {
+
+        mEmail = email;
+        mLat = lat;
+        mLong = Long;
+    }
+
     public User()
     {
-        mDisplayName = null;
+        mEmail = null;
         mLat = 0.0;
         mLong = 0.0;
     }
 
     public String getEmail(){
         return mEmail;
-    }
-
-    public void setIsHunted(boolean truth){
-        mIsHunted = truth;
-    }
-
-    public String getDisplayName() {
-        return mDisplayName;
     }
 
     public double getLat() {
@@ -50,24 +44,9 @@ public class User {
         return mLong;
     }
 
-    public void setName(String name){
-        mDisplayName = name;
-    }
-
     public void setEmail(String email){
         mEmail = email.replace("@", "at").replace(".", "dot");
     }
 
-    public boolean isHunted(){
-        return mIsHunted;
-    }
-
-    public String getHuntedEmail(){
-        return mHuntedEmail;
-    }
-
-    public void setHuntedEmail(String s){
-        mHuntedEmail = s;
-    }
 }
 
