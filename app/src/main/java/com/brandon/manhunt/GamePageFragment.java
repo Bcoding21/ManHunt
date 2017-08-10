@@ -73,7 +73,8 @@ public class GamePageFragment extends Fragment {
     }
 
     public void recieveLocation(Location location){
-        mHuntersLocationField.setText("LAT: " + location.getLatitude() + " \n LONG: " + location.getLongitude() + "\n");
+        mHuntersLocationField.setText("Hunted last known coordinates\nLAT: " + location.getLatitude() + " \n LONG: " + location.getLongitude() + "\n" +
+                "Check the map!");
     }
 
     public void getHuntersInformation(List<Location> location, double currentLat, double currentLong){

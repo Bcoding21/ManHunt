@@ -273,6 +273,4 @@ checkLocationPermission();
     //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng),17.2f));
     //
 
-
-
 }
