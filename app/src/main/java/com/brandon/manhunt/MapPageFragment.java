@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.brandon.manhunt.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -70,7 +71,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     MapView mapView;
     GoogleMap Gmap;
     View mView;
-    private Circle circle;
 
     TextView test;
 
@@ -134,9 +134,9 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         MapsInitializer.initialize(getContext());
         Gmap = googleMap;
         Gmap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.setIndoorEnabled(true);
+        Gmap.setIndoorEnabled(true);
 
-   }
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -223,34 +223,34 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
 
     public void updateMap(double Latitude, double Longitude){
-checkLocationPermission();
-         // TODO
+        checkLocationPermission();
+        // TODO
 
 
         /* This function is called every 30 seconds by another function outside this class.
         * Write code for updating the map in here*/
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
-        if (circle != null) {
-            circle.remove();
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
         }
 
         double newLat = Latitude + (Math.random()*.001)-.001;
         //get the latitude
         double newLong =  Longitude + (Math.random()*.001)-.001;
         //get the longitude
-        LatLng OlatLng = new LatLng (Latitude, Longitude);
-        ;
+        //LatLng OlatLng = new LatLng (Latitude, Longitude);
+        //Gmap.addMarker(new MarkerOptions().position(OlatLng));
         LatLng latLng = new LatLng (newLat, newLong);
-        //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-                    //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        circle = Gmap.addCircle(new CircleOptions()
-                     .center(latLng)
-                    .radius(100)
-                  .strokeColor(R.color.colorAccent)
+        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+        Circle circle = Gmap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(100)
+                .strokeColor(R.color.colorAccent)
                 .fillColor(R.color.red));
 
-            Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 15.0F));
+        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 15.0F));
 
         //}
     }
@@ -272,5 +272,7 @@ checkLocationPermission();
     //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.42011307755486, -122.08767384446583),17.2f));
     //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng),17.2f));
     //
+
+
 
 }

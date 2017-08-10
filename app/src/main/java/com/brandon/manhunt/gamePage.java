@@ -82,6 +82,8 @@ public class gamePage extends AppCompatActivity {
         // set current user email
         mCurrentUserEmail = User.getInstance().getEmail();
 
+
+
         startSession();
     }
 
@@ -102,7 +104,7 @@ public class gamePage extends AppCompatActivity {
                     User user = new User(mCurrentUserEmail, 0, 0);
                     mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
                     passInfoToGameFragment(false);
-                    getHuntedLocation();
+                    //getHuntedLocation();
                 }
             }
 
@@ -131,11 +133,16 @@ public class gamePage extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
-        }
+            return;
+        } //else {
+            //startrequestiing();
+       // }
+    //}
+
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 7000, 0, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
@@ -146,12 +153,11 @@ public class gamePage extends AppCompatActivity {
                     String name1 = mCurrentUserEmail;
                     String name2 = mHuntedEmail;
 
-                    if (isHunted){
+                    if (isHunted) {
                         mReference.child("Hunted").child("lat").setValue(latitude);
                         mReference.child("Hunted").child("long").setValue(longitude);
                         getHuntersLocation(latitude, longitude);
-                    }
-                    else{
+                    } else {
                         mReference.child("Hunters").child(mCurrentUserEmail).child("lat").setValue(latitude);
                         mReference.child("Hunters").child(mCurrentUserEmail).child("long").setValue(longitude);
                     }
@@ -306,6 +312,12 @@ public class gamePage extends AppCompatActivity {
                         MY_PERMISSIONS_REQUEST_LOCATION );
             }
         }
+    }
+
+    //@Override
+    public void onRequestPermissionsResult() {
+        //if yes
+                //startrequesting
     }
 
 
