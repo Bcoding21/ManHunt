@@ -82,8 +82,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         mViewPager = (ViewPager) findViewById(R.id.container);
 
         // set and Create Adapter/TabLayout
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        something cat = new something();
+        mSectionsPagerAdapter = new SectionsPagerAdapter(cat.hello());
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(mViewPager);
