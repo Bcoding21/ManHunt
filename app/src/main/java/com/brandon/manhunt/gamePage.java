@@ -17,12 +17,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -76,6 +82,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         mViewPager = (ViewPager) findViewById(R.id.container);
 
         // set and Create Adapter/TabLayout
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
@@ -101,15 +108,17 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+            Log.d("CHECK HERE", "IN ON START PERMISSIONS");
 
             ActivityCompat.requestPermissions(this, new String[]{
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSION_REQUEST_CODE);
+
         } else {
 
             if (checkPlayServices()) {
-
+                Log.d("CHECK HERE", "PERMISSIONS");
                 buildGoogleApiClient();
                 createLocationRequest();
             }
@@ -133,6 +142,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
 
     private void createLocationRequest() {
+        Log.d("CHECK HERE", "LOCATION REQUEST");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
@@ -141,6 +151,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     protected synchronized void buildGoogleApiClient() {
+        Log.d("CHECK HERE", "BUILD GOOGLE API CLIENT");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -150,6 +161,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     private boolean checkPlayServices() {
+        Log.d("CHECK HERE", "CHECK PLAY SERVICES");
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS){
 
@@ -158,7 +170,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             }
             else{
                 Toast.makeText(getApplicationContext(), "This device is not supported", Toast.LENGTH_LONG).show();
-                finish();
+                // finish();
             }
 
             return false;
@@ -168,6 +180,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("CHECK HERE", "REQUEST PERMISSIONS");
         switch (requestCode){
             case MY_PERMISSION_REQUEST_CODE:
 
@@ -182,6 +195,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
 
     private void startSession(){
+
+        Log.d("CHECK HERE", "Start session");
 
         mReference.child("GAMEOVER").setValue(false);
         mReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -435,6 +450,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         if (mGoogleApiClient != null){
             mGoogleApiClient.disconnect();
         }
+        mGoogleApiClient = null;
 
     }
 }

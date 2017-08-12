@@ -126,7 +126,10 @@ public class GamePageFragment extends Fragment {
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
-        LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
+        if (client.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
+            client.disconnect();
+        }
 
         new CountDownTimer(10000, 1000){
 
