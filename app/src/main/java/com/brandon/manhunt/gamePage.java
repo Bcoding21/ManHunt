@@ -107,6 +107,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             }
         }
 
+
+
         startSession();
 
     }
@@ -198,6 +200,12 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
                 else if (dataSnapshot.hasChild("Hunted")){ // if user is a hunter
 
+<<<<<<< HEAD
+                    User user = new User(mCurrentUserEmail, 0, 0);
+                    mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
+                    passInfoToGameFragment(false);
+                    //getHuntedLocation();
+=======
                     mReference.child("Hunted").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -217,6 +225,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
                         }
                     });
+>>>>>>> fe75cbbac88b247d32cde8550fc03f828b1698d5
                 }
             }
 
@@ -244,8 +253,20 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
 
+<<<<<<< HEAD
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+            return;
+        } //else {
+            //startrequestiing();
+       // }
+    //}
+
+        mLocationListener = new LocationListener() {
+=======
     private void getHuntedInformation(){
         mReference.child("Hunted").addListenerForSingleValueEvent(new ValueEventListener() {
+>>>>>>> fe75cbbac88b247d32cde8550fc03f828b1698d5
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mHuntedEmail = dataSnapshot.child("email").getValue(String.class);
@@ -451,8 +472,20 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         checkHunted();
     }
 
+<<<<<<< HEAD
+    //@Override
+    public void onRequestPermissionsResult() {
+        //if yes
+        //startrequesting
+    }
+
+    private void listenForGameOver(){
+
+        mReference.child("GAMEOVER").addValueEventListener(new ValueEventListener() {
+=======
     private void checkHunted() {
         mReference.child("Hunted").child("email").addListenerForSingleValueEvent(new ValueEventListener() {
+>>>>>>> fe75cbbac88b247d32cde8550fc03f828b1698d5
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (mCurrentUserEmail.equals(dataSnapshot.getValue(String.class))){
@@ -486,8 +519,16 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     @Override
+<<<<<<< HEAD
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Toast.makeText(this, "YOU HAVE LEFT THE GAME", Toast.LENGTH_SHORT).show();
+
+=======
     public void onBackPressed() {
         super.onBackPressed();
+>>>>>>> fe75cbbac88b247d32cde8550fc03f828b1698d5
         if (mCurrentUserEmail.equals(mHuntedEmail)){
             mReference.child("Hunted").setValue(null);
         }
