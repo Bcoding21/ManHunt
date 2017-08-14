@@ -91,7 +91,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            Log.d("CHECK HERE", "IN ON START PERMISSIONS");
+
 
             ActivityCompat.requestPermissions(this, new String[]{
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -101,16 +101,10 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         } else {
 
             if (checkPlayServices()) {
-                Log.d("CHECK HERE", "PERMISSIONS");
                 buildGoogleApiClient();
                 createLocationRequest();
             }
         }
-
-
-
-        startSession();
-
     }
 
 
@@ -217,8 +211,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     User user = new User(mCurrentUserEmail, 0, 0);
                     mReference.child("Hunted").setValue(user);
                     mReference.child("Hunted").child("hintLocation").setValue(new userLocation(0,0));
-
-
                     passInfoToGameFragment(true);
                     mHuntedEmail = mCurrentUserEmail;
 
@@ -309,13 +301,12 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    if (dataSnapshot.hasChild("hintLat") && dataSnapshot.hasChild("hintLong")) {
+                    if (dataSnapshot.hasChild("lat") && dataSnapshot.hasChild("long")) {
                         double latitude = dataSnapshot.child("lat").getValue(Double.class);
                         double longitude = dataSnapshot.child("long").getValue(Double.class);
                         mLastlocation.setLongitude(longitude);
                         mLastlocation.setLatitude(latitude);
                         mGameFragment.recieveHuntedLocation(mLastlocation, myLattitude, myLongitude);
-                        getHuntedHintLocation();
                     }
                 }
             }
@@ -328,12 +319,69 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     private void getHuntedHintLocation(){
-        mReference.child("Hunted").child("hintLocation").addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.child("Hunted").child("hintLocation").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                double lat = dataSnapshot.getValue(Double.class);
-                double Long = dataSnapshot.getValue(Double.class);
-                mMapFragment.updateMap(lat, Long);
+                if (dataSnapshot.exists()) {
+                    double lat = dataSnapshot.child("lat").getValue(Double.class);
+                    double Long = dataSnapshot.child("long").getValue(Double.class);
+                    mMapFragment.updateMap(lat, Long);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getHuntersHintLocation(final Location myLocation){
+        mReference.child("Hunters").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                    Iterator<DataSnapshot> snap = children.iterator();
+                    List<Location> locations = new ArrayList<Location>();
+
+                    while (snap.hasNext()) {
+                        DataSnapshot d = snap.next();
+
+                        if (d.child("hintLocation").child("lat").exists() && d.child("hintLocation").child("long").exists()) {
+                            double latitude = d.child("hintLocation").child("lat").getValue(Double.class);
+                            double longitude = d.child("hintLocation").child("long").getValue(Double.class);
+
+                            Location l = new Location("");
+                            l.setLatitude(latitude);
+                            l.setLongitude(longitude);
+
+                            locations.add(l);
+                        }
+
+                        if (locations.size() > 0) {
+
+                            double smallestDistance = locations.get(0).distanceTo(myLocation);
+                            Location coordinates = new Location("");
+
+                            for (int i = 0; i < locations.size(); i++) {
+
+                                if (locations.get(i).distanceTo(myLocation) < smallestDistance) {
+                                    smallestDistance = locations.get(i).distanceTo(myLocation);
+                                    coordinates = locations.get(i);
+                                }
+
+                                double testsmallest = smallestDistance;
+
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
+
+                                mMapFragment.updateMap(latitude, longitude);
+                            }
+                        }
+                    }
+                }
             }
 
             @Override
@@ -395,19 +443,20 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     double longitude, latitude;
                     DataSnapshot son = null;
 
-                        while (hunters_children.hasNext()) {
+                    while (hunters_children.hasNext()) {
 
-                            son = hunters_children.next();
+                        son = hunters_children.next();
+                        if (son.hasChild("lat") && son.hasChild("long")) {
 
-                            if (son.hasChild("lat") && son.hasChild("long")) {
                             latitude = son.child("lat").getValue(Double.class).doubleValue();
                             longitude = son.child("long").getValue(Double.class).doubleValue();
 
-                            Location location = new Location("");
-                            location.setLongitude(longitude);
-                            location.setLatitude(latitude);
-
-                            hunters_locations.add(location);
+                            if (latitude != 0 || longitude != 0) {
+                                Location location = new Location("");
+                                location.setLongitude(longitude);
+                                location.setLatitude(latitude);
+                                hunters_locations.add(location);
+                            }
                         }
                         mGameFragment.receiveHuntersInformation(hunters_locations, mLastlocation.getLatitude(),
                                 mLastlocation.getLongitude());
@@ -451,9 +500,12 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             if (mCurrentUserEmail.equals(mHuntedEmail)) {
                 sendHuntedLocation();
                 getHuntersLocaiton();
+                getHuntersHintLocation(mLastlocation);
             } else {
                 sendHuntersLocation(location.getLatitude(), location.getLongitude());
                 getHuntedLocation(location.getLatitude(), location.getLongitude());
+                getHuntedHintLocation();
+
 
             }
         }
@@ -464,7 +516,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue(Boolean.class)){
-                   mGameFragment.getInstance().setGameOver(mGoogleApiClient, gamePage.this);
+                    mGameFragment.getInstance().setGameOver(mGoogleApiClient, gamePage.this);
 
                 }
             }
@@ -515,11 +567,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         });
     }
 
-    private void getHuntersHintLocation(){
-
-       // mReference.child()
-    }
-
     public void onBackPressed() {
         super.onBackPressed();
         if (mCurrentUserEmail.equals(mHuntedEmail)){
@@ -531,6 +578,12 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         Intent myIntent = new Intent(gamePage.this, MainActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(myIntent);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        startSession();
     }
 
     @Override

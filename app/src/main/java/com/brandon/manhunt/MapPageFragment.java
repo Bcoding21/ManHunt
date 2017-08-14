@@ -93,6 +93,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
     private boolean isUserHunted;
     private Long inLat, inLong;
     private Location location;
+    Circle circle;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
 
@@ -188,7 +189,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
-
     }
 
     @Override
@@ -231,28 +231,26 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         * Write code for updating the map in here*/
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
+        if (circle != null) {
+            //mCurrLocationMarker.remove();
+            circle.remove();
         }
 
-        double newLat = Latitude + (Math.random()*.001)-.001;
+        double newLat = Latitude;
         //get the latitude
-        double newLong =  Longitude + (Math.random()*.001)-.001;
+        double newLong =  Longitude;
         //get the longitude
-        //LatLng OlatLng = new LatLng (Latitude, Longitude);
-        //Gmap.addMarker(new MarkerOptions().position(OlatLng));
+
         LatLng latLng = new LatLng (newLat, newLong);
-        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        Circle circle = Gmap.addCircle(new CircleOptions()
+
+        //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+        circle = Gmap.addCircle(new CircleOptions()
                 .center(latLng)
-                .radius(100)
-                .strokeColor(R.color.colorAccent)
-                .fillColor(R.color.red));
+                .radius(25)
+                .strokeColor(R.color.colorPrimaryDark));
 
-        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 15.0F));
 
-        //}
+        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 18.50F));
     }
 
 
@@ -266,12 +264,6 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-
-    //googleMap.addMarker(new MarkerOptions().position(new LatLng(37.42011307755486, -122.08767384446583)));
-    // googleMap.addMarker(new MarkerOptions().position(latLng));
-    //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.42011307755486, -122.08767384446583),17.2f));
-    //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng),17.2f));
-    //
 
 
 
