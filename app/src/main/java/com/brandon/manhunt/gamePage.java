@@ -176,7 +176,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         }
     }
 
-    private class userLocation{
+    public static class userLocation{
 
         public double getLat() {
             return mLat;
@@ -400,7 +400,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                             son = hunters_children.next();
 
                             if (son.hasChild("lat") && son.hasChild("long")) {
-                            Log.i("DEI", "son="+son.toString());
                             latitude = son.child("lat").getValue(Double.class).doubleValue();
                             longitude = son.child("long").getValue(Double.class).doubleValue();
 
