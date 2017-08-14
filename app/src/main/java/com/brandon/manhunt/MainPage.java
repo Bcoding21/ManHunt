@@ -2,7 +2,9 @@ package com.brandon.manhunt;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
+    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
     TextView mWelcome;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mReference;
@@ -47,6 +50,16 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.delete_acc).setOnClickListener(this);
         findViewById(R.id.play_game).setOnClickListener(this);
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d("CHECK HERE", "IN ON START PERMISSIONS");
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_REQUEST_CODE);
+        }
         // Listens for sign in/sign out
         signOutCheck();
     }
