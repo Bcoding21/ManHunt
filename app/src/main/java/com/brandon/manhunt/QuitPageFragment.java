@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -26,9 +29,13 @@ public class QuitPageFragment extends Fragment implements View.OnClickListener {
         return mQuitPageFragment;
     }
 
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mRef;
+    private String mHuntedEmail, mCurrentUserEmail;
+    private GoogleApiClient mClient;
+    private LocationListener mListener;
 
-    private static final String TAG = "FRAGMENT_QUIT_PAGE";
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,12 +43,37 @@ public class QuitPageFragment extends Fragment implements View.OnClickListener {
 
         v.findViewById(R.id.quit_button).setOnClickListener(this);
 
+        mRef = FirebaseDatabase.getInstance().getReference();
+
+
         return v;
+    }
+
+    public void passInformation(String hunted_email, String currentUserName, LocationListener listener, GoogleApiClient client){
+        mHuntedEmail = hunted_email;
+        mCurrentUserEmail = currentUserName;
+        mListener = listener;
+        mClient = client;
     }
 
     @Override
     public void onClick(View view) {
 
-        startActivity(new Intent(getActivity(), MainPage.class));
+        String a = mCurrentUserEmail;
+        String b = mHuntedEmail;
+
+        if (mCurrentUserEmail.equals(mHuntedEmail)){
+            mRef.child("Hunted").setValue(null);
+        }
+        else{
+            mRef.child("Hunters").child(mCurrentUserEmail).setValue(null);
+        }
+
+        LocationServices.FusedLocationApi.removeLocationUpdates(mClient, mListener);
+        User.getInstance().setIsPlaying(false);
+        Intent myIntent = new Intent(getActivity(), MainPage.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(myIntent);
+
     }
 }

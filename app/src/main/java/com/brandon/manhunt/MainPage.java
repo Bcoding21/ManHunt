@@ -67,7 +67,8 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
 
             case R.id.log_out:
                 mAuth.getInstance().signOut();
-                startActivity(new Intent(MainPage.this, MainActivity.class));
+                Intent myIntent = new Intent(MainPage.this, MainActivity.class);
+                startActivity(myIntent);
                 break;
         }
     }
@@ -116,7 +117,6 @@ public class MainPage extends AppCompatActivity implements View.OnClickListener{
                 String username = (String)dataSnapshot.getValue();
                 mWelcome.setText("Welcome " + username);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
