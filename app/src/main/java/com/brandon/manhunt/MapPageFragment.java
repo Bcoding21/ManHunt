@@ -246,13 +246,11 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
         circle = Gmap.addCircle(new CircleOptions()
                 .center(latLng)
-                .radius(45)
+                .radius(25)
                 .strokeColor(R.color.colorPrimaryDark));
 
 
-        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 17.0F));
-
-
+        Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 18.50F));
     }
 
 
