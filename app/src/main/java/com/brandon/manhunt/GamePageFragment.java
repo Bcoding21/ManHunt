@@ -121,11 +121,7 @@ public class GamePageFragment extends Fragment {
             double Long = closest_coordinates.getLongitude();
 
             MapPageFragment.getInstance().updateMap(lat, Long);
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 580ae6708e9593dfc624f17eb2bc0957ccb17a3d
             if (smallestDistance < 10.00) {
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
                 mReference.child("GAMEOVER").setValue(true);
