@@ -142,6 +142,7 @@ public class GamePageFragment extends Fragment {
             public void onFinish() {
 
                 Intent myIntent = new Intent(getActivity(), MainPage.class);
+                myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(myIntent);
 
             }
