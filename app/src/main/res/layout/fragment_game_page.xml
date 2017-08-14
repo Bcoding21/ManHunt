@@ -10,24 +10,55 @@
     android:orientation="vertical"
     android:id="@+id/game_page_frag">
 
-    <TextView
-        android:id="@+id/display_info"
-        android:shadowColor="#000000"
-        android:shadowRadius="3"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:text="You are hunting: "
-        android:textSize="30dp"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/hunters_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="100dp"
-        android:textSize="30dp"
-        />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/creepy"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/display_info"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:text="You are hunting: "
+                    android:textSize="30dp"/>
+
+                <TextView
+                    android:id="@+id/hunters_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="100dp"
+                    android:textSize="30dp"
+                    />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+
 
 </LinearLayout>
