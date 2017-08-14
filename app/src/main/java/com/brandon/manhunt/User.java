@@ -10,8 +10,7 @@ public class User {
     private double mHintLongitude;
 
     private String mEmail;
-    private boolean mIsHunted;
-    private String mHuntedEmail;
+    private boolean mIsPlaying = false;
 
     public static User getInstance(){
         if (mUser == null){
@@ -60,6 +59,14 @@ public class User {
 
     public double getHintLong(){
         return mHintLongitude;
+    }
+
+    public void setIsPlaying(boolean isPlaying){
+        mIsPlaying = isPlaying;
+    }
+
+    public boolean isPlaying(){
+        return mIsPlaying;
     }
 
 }

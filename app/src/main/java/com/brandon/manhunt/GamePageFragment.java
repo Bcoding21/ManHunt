@@ -141,7 +141,9 @@ public class GamePageFragment extends Fragment {
             @Override
             public void onFinish() {
 
-                startActivity(new Intent(getContext(), MainPage.class));
+                Intent myIntent = new Intent(getActivity(), MainPage.class);
+                startActivity(myIntent);
+
             }
         }.start();
 
