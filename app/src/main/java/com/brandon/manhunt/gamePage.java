@@ -401,8 +401,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
                             if (son.hasChild("lat") && son.hasChild("long")) {
                             Log.i("DEI", "son="+son.toString());
-                            latitude = 0;//son.child("lat").getValue(Double.class).doubleValue();
-                            longitude = 0;//son.child("long").getValue(Double.class).doubleValue();
+                            latitude = son.child("lat").getValue(Double.class).doubleValue();
+                            longitude = son.child("long").getValue(Double.class).doubleValue();
 
                             Location location = new Location("");
                             location.setLongitude(longitude);
@@ -514,6 +514,11 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
             }
         });
+    }
+
+    private void getHuntersHintLocation(){
+
+       // mReference.child()
     }
 
     public void onBackPressed() {
