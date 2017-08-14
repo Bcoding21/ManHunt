@@ -300,6 +300,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                         mLastlocation.setLongitude(longitude);
                         mLastlocation.setLatitude(latitude);
                         mGameFragment.recieveHuntedLocation(mLastlocation, myLattitude, myLongitude);
+                        mMapFragment.updateMap(myLattitude, myLongitude);
                     }
                 }
             }
@@ -380,6 +381,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
                         mGameFragment.receiveHuntersInformation(hunters_locations, mLastlocation.getLatitude(),
                                 mLastlocation.getLongitude());
+                            mMapFragment.updateMap(mLastlocation.getLatitude(), mLastlocation.getLongitude());
                     }
                 }
 
