@@ -231,25 +231,21 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         * Write code for updating the map in here*/
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
-        if (circle != null) {
+        if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
-            circle.remove();
+            //circle.remove();
         }
 
-        double newLat = Latitude + (Math.random()*.001)-.001;
+        double newLat = Latitude;
         //get the latitude
-        double newLong =  Longitude + (Math.random()*.001)-.001;
+        double newLong =  Longitude;
         //get the longitude
         //LatLng OlatLng = new LatLng (Latitude, Longitude);
         //Gmap.addMarker(new MarkerOptions().position(OlatLng));
         LatLng latLng = new LatLng (newLat, newLong);
         //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        circle = Gmap.addCircle(new CircleOptions()
-                .center(latLng)
-                .radius(80)
-                .strokeColor(R.color.colorAccent));
-                //.fillColor(R.color.red));
+        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+
 
         //Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 15.0F));
 

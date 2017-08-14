@@ -45,7 +45,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     private static int DISPLACEMENT = 0;
     private LocationRequest mLocationRequest;
     public static GoogleApiClient mGoogleApiClient;
-    private Location mLastlocation;
+    private Location mLastlocation, mHintLocation;
     private byte mTimesTilHunterHint;
     private byte mTimesTilHuntedHint;
     private boolean mFirstHint, mIsInGame;
@@ -201,6 +201,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     User user = new User(mCurrentUserEmail, 0, 0, 0, 0);
                     mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
                     passInfoToGameFragment(false);
+          //getHuntedLocation();
                 }
             }
 
@@ -230,7 +231,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
     private void getHuntedInformation(){
         mReference.child("Hunted").addListenerForSingleValueEvent(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mHuntedEmail = dataSnapshot.child("email").getValue(String.class);
@@ -285,7 +285,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                         mLastlocation.setLongitude(longitude);
                         mLastlocation.setLatitude(latitude);
                         mGameFragment.recieveHuntedLocation(mLastlocation, myLattitude, myLongitude);
-                        mMapFragment.updateMap(myLattitude, myLongitude);
+                        mMapFragment.updateMap(latitude, longitude);
                     }
                 }
             }
@@ -363,10 +363,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
                             hunters_locations.add(location);
                         }
-
                         mGameFragment.receiveHuntersInformation(hunters_locations, mLastlocation.getLatitude(),
                                 mLastlocation.getLongitude());
-                            mMapFragment.updateMap(mLastlocation.getLatitude(), mLastlocation.getLongitude());
                     }
                 }
 
@@ -399,6 +397,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     public void onLocationChanged(Location location) {
 
         mLastlocation = location;
+
 
         String a = mCurrentUserEmail;
         String b = mHuntedEmail;
@@ -438,7 +437,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
     private void checkHunted() {
         mReference.child("Hunted").child("email").addListenerForSingleValueEvent(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (mCurrentUserEmail.equals(dataSnapshot.getValue(String.class))){
@@ -470,10 +468,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             }
         });
     }
-
+    
     @Override
-
-
     public void onBackPressed() {
         super.onBackPressed();
         if (mCurrentUserEmail.equals(mHuntedEmail)){
