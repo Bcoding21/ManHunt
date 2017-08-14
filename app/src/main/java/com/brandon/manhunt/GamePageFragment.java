@@ -85,7 +85,7 @@ public class GamePageFragment extends Fragment {
         mDisplayField.setText(s);
     }
 
-    public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
+        public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
 
         Location myLocation = new Location("");
         myLocation.setLatitude(lattitude);
@@ -121,6 +121,7 @@ public class GamePageFragment extends Fragment {
             double Long = closest_coordinates.getLongitude();
 
             MapPageFragment.getInstance().updateMap(lat, Long);
+
 
             if (smallestDistance < 10.00) {
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
