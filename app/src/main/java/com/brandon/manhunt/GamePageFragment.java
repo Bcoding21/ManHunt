@@ -93,7 +93,7 @@ public class GamePageFragment extends Fragment {
 
         double distance = myLocation.distanceTo(huntedLocation);
 
-        if (distance < 30.00){
+        if (distance < 10.00){
             mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
             mReference.child("GAMEOVER").setValue(true);
         }
@@ -115,7 +115,7 @@ public class GamePageFragment extends Fragment {
                 }
             }
 
-            if (smallestDistance < 30.00) {
+            if (smallestDistance < 10.00) {
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
                 mReference.child("GAMEOVER").setValue(true);
             }
