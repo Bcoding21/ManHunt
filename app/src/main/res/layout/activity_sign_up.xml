@@ -8,61 +8,94 @@
     android:orientation="vertical"
     tools:context="com.brandon.manhunt.SignUp">
 
-
-    <TextView
-        android:id="@+id/title"
-        android:shadowColor="#000000"
-        android:shadowRadius="4"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Manhunt"
-        android:textColor="@android:color/white"
-        android:textSize="34dp"
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/display"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/white"
-        android:hint="Enter your username"
-        android:textColor="@android:color/white"
-        android:inputType="textAutoComplete"
-        android:layout_marginTop="100dp"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/email"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/white"
-        android:hint="Enter your email address"
-        android:textColor="@android:color/white"
-        android:inputType="textEmailAddress"
-        android:layout_marginTop="50dp"/>
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/creepy"
+                />
 
-    <EditText
-        android:id="@+id/password"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/white"
-        android:hint="Enter your password"
-        android:textColor="@android:color/white"
-        android:inputType="textPassword"
-        android:layout_marginTop="50dp"/>
+        </RelativeLayout>
 
-    <Button
-        android:id="@+id/SignUpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="25dp"
-        android:text= "Sign up"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome to Manhunt"
+                    android:textColor="@android:color/white"
+                    android:textSize="34dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center"
+                    />
+
+                <EditText
+                    android:id="@+id/display"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@android:color/white"
+                    android:hint="Enter your username"
+                    android:textColor="@android:color/white"
+                    android:inputType="textAutoComplete"
+                    android:layout_marginTop="80dp"
+                    />
+
+                <EditText
+                    android:id="@+id/email"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@android:color/white"
+                    android:hint="Enter your email address"
+                    android:textColor="@android:color/white"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginTop="30dp"/>
+
+                <EditText
+                    android:id="@+id/password"
+                    android:shadowColor="#000000"
+                    android:shadowRadius="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@android:color/white"
+                    android:hint="Enter your password"
+                    android:textColor="@android:color/white"
+                    android:inputType="textPassword"
+                    android:layout_marginTop="30dp"/>
+
+                <Button
+                    android:id="@+id/SignUpButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="25dp"
+                    android:text= "Sign up"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+
+
 
 </LinearLayout>

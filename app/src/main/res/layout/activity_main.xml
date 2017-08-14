@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:background="@drawable/creepy_sc"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
@@ -9,31 +8,58 @@
               tools:context="com.brandon.manhunt.MainActivity"
               android:weightSum="1">
 
-    <TextView
-        android:shadowColor="#000000"
-        android:shadowRadius="4"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Manhunt"
-        android:textColor="@android:color/white"
-        android:textSize="39dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"/>
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/SignIn"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="125dp"
-        android:text="Sign in"/>
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/creepy"
+                />
+        </RelativeLayout>
 
-    <Button
-        android:id="@+id/SignUp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"
-        android:text="Sign up"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:shadowColor="#000000"
+                    android:shadowRadius="4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome to Manhunt"
+                    android:textColor="@android:color/white"
+                    android:textSize="39dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp" />
+
+                <Button
+                    android:id="@+id/SignIn"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="125dp"
+                    android:text="Sign in"/>
+
+                <Button
+                    android:id="@+id/SignUp"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:layout_gravity="center"
+                    android:text="Sign up"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>

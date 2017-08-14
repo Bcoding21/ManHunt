@@ -8,50 +8,83 @@
     tools:context="com.brandon.manhunt.SignIn"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/display"
-        android:shadowColor="#000000"
-        android:shadowRadius="4"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Manhunt"
-        android:textColor="@android:color/white"
-        android:textSize="34dp"
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/signin_email"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:layout_marginTop="120dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/white"
-        android:hint="@string/enter_email"
-        android:textColor="@android:color/white"
-        android:inputType="textEmailAddress"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/signin_password"
-        android:shadowColor="#000000"
-        android:shadowRadius="2"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/white"
-        android:hint="@string/enter_password"
-        android:textColor="@android:color/white"
-        android:inputType="textPassword"
-        />
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/creepy"
+                />
 
-    <Button
-        android:id="@+id/signin_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Sign_in"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/display"
+                android:shadowColor="#000000"
+                android:shadowRadius="4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to Manhunt"
+                android:textColor="@android:color/white"
+                android:textSize="34dp"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"/>
+
+            <EditText
+                android:id="@+id/signin_email"
+                android:shadowColor="#000000"
+                android:shadowRadius="2"
+                android:layout_marginTop="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@android:color/white"
+                android:hint="@string/enter_email"
+                android:textColor="@android:color/white"
+                android:inputType="textEmailAddress"/>
+
+            <EditText
+                android:id="@+id/signin_password"
+                android:shadowColor="#000000"
+                android:shadowRadius="2"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@android:color/white"
+                android:hint="@string/enter_password"
+                android:textColor="@android:color/white"
+                android:inputType="textPassword"
+                />
+
+            <Button
+                android:id="@+id/signin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Sign_in"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+
+
+
 
 
 
