@@ -280,8 +280,10 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.hasChild("hintLat") && dataSnapshot.hasChild("hintLong")) {
-                        double latitude = dataSnapshot.child("hintLat").getValue(Double.class);
-                        double longitude = dataSnapshot.child("hintLong").getValue(Double.class);
+                        double hintLatitude = dataSnapshot.child("hintLat").getValue(Double.class);
+                        double hintLongitude = dataSnapshot.child("hintLong").getValue(Double.class);
+                        double latitude = dataSnapshot.child("lat").getValue(Double.class);
+                        double longitude = dataSnapshot.child("long").getValue(Double.class);
                         mLastlocation.setLongitude(longitude);
                         mLastlocation.setLatitude(latitude);
                         mGameFragment.recieveHuntedLocation(mLastlocation, myLattitude, myLongitude);
