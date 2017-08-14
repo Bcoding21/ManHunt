@@ -1,39 +1,25 @@
 package com.brandon.manhunt;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,18 +30,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class gamePage extends AppCompatActivity {
+public class gamePage extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String TAG = "MAIN_GAME_PAGE";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private DatabaseReference mReference;
-    private String mHuntedEmail, mCurrentUserEmail, mHuntedUsername;
-    private LocationManager locationManager;
-    private long THIRTY_SECONDS = 30000;
-    private double mLongitude, mLatitude;
-    private FusedLocationProviderClient mFusedLocationClient;
+    protected String mHuntedEmail, mCurrentUserEmail, mHuntedUsername;
+    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 7172;
+    private static int UPDATE_INTERVAL = 1000;
+    private static int FASTEST_UPDATE_INTERVAL = 500;
+    private static int DISPLACEMENT = 0;
+    private LocationRequest mLocationRequest;
+    public static GoogleApiClient mGoogleApiClient;
+    private Location mLastlocation, mHintLocation;
+    private byte mTimesTilHunterHint;
+    private byte mTimesTilHuntedHint;
+    private boolean mFirstHint, mIsInGame;
+    private GamePageFragment mGameFragment;
+    private MapPageFragment mMapFragment;
+    private QuitPageFragment mQuitFragment;
+    private boolean isCurrentlyPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,37 +69,141 @@ public class gamePage extends AppCompatActivity {
         mViewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(mViewPager);
 
-        // set Up location
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // set Fragment References
+        mGameFragment = GamePageFragment.getInstance();
+        mMapFragment = MapPageFragment.getInstance();
+        mQuitFragment = QuitPageFragment.getInstance();
 
         //Firebase
         mReference = FirebaseDatabase.getInstance().getReference();
 
-        // set current user email
+        // set current user
+        User.getInstance().setIsPlaying(true);
         mCurrentUserEmail = User.getInstance().getEmail();
+        setIsPlaying();
+
+        // set delay till hint
+        mTimesTilHuntedHint = 10;
+        mTimesTilHunterHint = 10;
+        mFirstHint = true;
+
+        // Permission check
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d("CHECK HERE", "IN ON START PERMISSIONS");
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_REQUEST_CODE);
+
+        } else {
+
+            if (checkPlayServices()) {
+                Log.d("CHECK HERE", "PERMISSIONS");
+                buildGoogleApiClient();
+                createLocationRequest();
+            }
+        }
+
+
 
         startSession();
+
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mGoogleApiClient != null){
+            mGoogleApiClient.connect();
+        }
+
+    }
+
+    private void createLocationRequest() {
+        Log.d("CHECK HERE", "LOCATION REQUEST");
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        Log.d("CHECK HERE", "BUILD GOOGLE API CLIENT");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    private boolean checkPlayServices() {
+        Log.d("CHECK HERE", "CHECK PLAY SERVICES");
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS){
+
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST);
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "This device is not supported", Toast.LENGTH_LONG).show();
+
+            }
+
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("CHECK HERE", "REQUEST PERMISSIONS");
+        switch (requestCode){
+            case MY_PERMISSION_REQUEST_CODE:
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    if (checkPlayServices()){
+                        buildGoogleApiClient();
+                    }
+                }
+                break;
+        }
+    }
+
+
     private void startSession(){
+
+        Log.d("CHECK HERE", "Start session");
+
+        mReference.child("GAMEOVER").setValue(false);
         mReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChild("Hunted")){  // if user is being hunted
 
-                    User user = new User(mCurrentUserEmail, 0, 0);
+                    boolean truth = User.getInstance().isPlaying();
+                    String s = mCurrentUserEmail;
+                    User user = new User(mCurrentUserEmail, 0, 0, 0, 0);
                     mReference.child("Hunted").setValue(user);
+
+
                     passInfoToGameFragment(true);
+                    mHuntedEmail = mCurrentUserEmail;
+
                 }
 
                 else if (dataSnapshot.hasChild("Hunted")){ // if user is a hunter
 
-
-                    User user = new User(mCurrentUserEmail, 0, 0);
+                    User user = new User(mCurrentUserEmail, 0, 0, 0, 0);
                     mReference.child("Hunters").child(mCurrentUserEmail).setValue(user);
                     passInfoToGameFragment(false);
-                    getHuntedLocation();
+                    //getHuntedLocation();
                 }
             }
 
@@ -111,133 +212,23 @@ public class gamePage extends AppCompatActivity {
 
             }
         });
+
+        listenForEndGame();
     }
 
     private void passInfoToGameFragment(boolean isHunted){
 
         if (isHunted) {
-            sendLocation(isHunted);
             String s = "YOU ARE BEING HUNTED!";
-            GamePageFragment.getInstance().getInformation(s);
-
+            mGameFragment.getInformation(s);
+            mHuntedEmail = mCurrentUserEmail;
+            mQuitFragment.passInformation(mHuntedEmail, mCurrentUserEmail, this, mGoogleApiClient);
         }
         else{
-            sendLocation(isHunted);
             getHuntedInformation();
         }
-    }
-
-    private void sendLocation(final boolean isHunted) {
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 7000, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    //get the latitude
-                    double longitude = location.getLongitude();
-                    //get the longitude
-
-                    String name1 = mCurrentUserEmail;
-                    String name2 = mHuntedEmail;
-
-                    if (isHunted){
-                        mReference.child("Hunted").child("lat").setValue(latitude);
-                        mReference.child("Hunted").child("long").setValue(longitude);
-                        getHuntersLocation(latitude, longitude);
-                    }
-                    else{
-                        mReference.child("Hunters").child(mCurrentUserEmail).child("lat").setValue(latitude);
-                        mReference.child("Hunters").child(mCurrentUserEmail).child("long").setValue(longitude);
-                    }
-
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-            });
-        }
-    }
-
-    private void getHuntedLocation() {
-
-        mReference.child("Hunted").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                mLatitude = dataSnapshot.child("lat").getValue(Double.class);
-                mLongitude = dataSnapshot.child("long").getValue(Double.class);
-
-                Location location = new Location("");
-                location.setLatitude(mLatitude);
-                location.setLongitude(mLongitude);
-
-                GamePageFragment.getInstance().recieveLocation(location);
-                MapPageFragment.getInstance().updateMap(mLatitude, mLongitude);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void getHuntersLocation(final double Latit, final double Longit){
-
-        mReference.child("Hunters").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-
-                    List<Location> location_list = new ArrayList<>();
-
-                    Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                    Iterator<DataSnapshot> snap = data.iterator();
-
-                    while (snap.hasNext()) {
-
-                        DataSnapshot location = snap.next();
-                        mLatitude = location.child("lat").getValue(Double.class);
-                        mLongitude = location.child("long").getValue(Double.class);
-
-                        Location user_location = new Location("");
-                        user_location.setLatitude(mLatitude);
-                        user_location.setLongitude(mLongitude);
-
-                        location_list.add(user_location);
-                    }
-
-                    GamePageFragment.getInstance().getHuntersInformation(location_list, Latit, Longit);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
     }
-
 
 
     private void getHuntedInformation(){
@@ -263,9 +254,45 @@ public class gamePage extends AppCompatActivity {
                 mHuntedUsername = name;
 
                 String s = "You are hunting: " + mHuntedUsername;
-                GamePageFragment.getInstance().getInformation(s);
+                mGameFragment.getInformation(s);
+                mQuitFragment.passInformation(mHuntedEmail, mCurrentUserEmail, gamePage.this, mGoogleApiClient);
             }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+
+    private void requestLocationUpdates(){
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            return;
+        }
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    private void getHuntedLocation(final double myLattitude, final double myLongitude){
+        mReference.child("Hunted").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("hintLat") && dataSnapshot.hasChild("hintLong")) {
+                        double hintLatitude = dataSnapshot.child("hintLat").getValue(Double.class);
+                        double hintLongitude = dataSnapshot.child("hintLong").getValue(Double.class);
+                        double latitude = dataSnapshot.child("lat").getValue(Double.class);
+                        double longitude = dataSnapshot.child("long").getValue(Double.class);
+                        mLastlocation.setLongitude(longitude);
+                        mLastlocation.setLatitude(latitude);
+                        mGameFragment.recieveHuntedLocation(mLastlocation, myLattitude, myLongitude);
+                        mMapFragment.updateMap(latitude, longitude);
+                    }
+                }
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -274,39 +301,200 @@ public class gamePage extends AppCompatActivity {
         });
     }
 
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+    private void sendHuntersLocation(double latitude, double longitude){
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (mFirstHint){
+            mReference.child("Hunters").child(mCurrentUserEmail).child("hintLat").setValue(latitude);
+            mReference.child("Hunters").child(mCurrentUserEmail).child("hintLong").setValue(longitude);
+            mFirstHint = false;
+        }
+        mReference.child("Hunters").child(mCurrentUserEmail).child("lat").setValue(latitude);
+        mReference.child("Hunters").child(mCurrentUserEmail).child("long").setValue(longitude);
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(gamePage.this,
-                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
-                            }
-                        })
-                        .create()
-                        .show();
+        if (mTimesTilHunterHint == 0){
+            mReference.child("Hunters").child(mCurrentUserEmail).child("hintLat").setValue(latitude);
+            mReference.child("Hunters").child(mCurrentUserEmail).child("hintLong").setValue(longitude);
+            mTimesTilHunterHint = 10;
+        }
+        mTimesTilHunterHint--;
+    }
+
+    private void sendHuntedLocation() {
+        double latitude = mLastlocation.getLatitude();
+        double longitude = mLastlocation.getLongitude();
+
+        if (mFirstHint){
+            mReference.child("Hunted").child("hintLat").setValue(latitude);
+            mReference.child("Hunted").child("hintLong").setValue(longitude);
+            mFirstHint = false;
+        }
+        mReference.child("Hunted").child("lat").setValue(latitude);
+        mReference.child("Hunted").child("long").setValue(longitude);
+
+        if (mTimesTilHuntedHint == 0){
+            mReference.child("Hunted").child("hintLat").setValue(latitude);
+            mReference.child("Hunted").child("hintLong").setValue(longitude);
+            mTimesTilHuntedHint = 10;
+        }
+        mTimesTilHuntedHint--;
+    }
+
+    private void getHuntersLocaiton() {
+        mReference.child("Hunters").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                    Iterator<DataSnapshot> hunters_children = data.iterator();
+                    List<Location> hunters_locations = new ArrayList<Location>();
+                    double longitude, latitude;
+                    DataSnapshot son = null;
+
+                        while (hunters_children.hasNext()) {
+
+                            son = hunters_children.next();
+
+                            if (son.hasChild("hintLat") && son.hasChild("hintLong")) {
+
+                            latitude = son.child("hintLat").getValue(Double.class);
+                            longitude = son.child("hintLong").getValue(Double.class);
+
+                            Location location = new Location("");
+                            location.setLongitude(longitude);
+                            location.setLatitude(latitude);
+
+                            hunters_locations.add(location);
+                        }
+                        mGameFragment.receiveHuntersInformation(hunters_locations, mLastlocation.getLatitude(),
+                                mLastlocation.getLongitude());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        requestLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        mLastlocation = location;
+
+
+        String a = mCurrentUserEmail;
+        String b = mHuntedEmail;
+
+        if (mLastlocation != null) {
+            if (mCurrentUserEmail.equals(mHuntedEmail)) {
+                sendHuntedLocation();
+                getHuntersLocaiton();
             } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                sendHuntersLocation(location.getLatitude(), location.getLongitude());
+                getHuntedLocation(location.getLatitude(), location.getLongitude());
+
             }
         }
     }
 
+    private void listenForEndGame(){
+        mReference.child("GAMEOVER").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)){
+                   mGameFragment.getInstance().setGameOver(mGoogleApiClient, gamePage.this);
 
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setIsPlaying(){
+        checkHunted();
+    }
+
+
+    private void checkHunted() {
+        mReference.child("Hunted").child("email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (mCurrentUserEmail.equals(dataSnapshot.getValue(String.class))){
+                    isCurrentlyPlaying = true;
+                }
+                else{
+                    checkHunters();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void checkHunters() {
+        mReference.child("Hunters").child(mCurrentUserEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                isCurrentlyPlaying = dataSnapshot.exists();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mCurrentUserEmail.equals(mHuntedEmail)){
+            mReference.child("Hunted").setValue(null);
+        }
+        else{
+            mReference.child("Hunters").child(mCurrentUserEmail).setValue(null);
+        }
+        Intent myIntent = new Intent(gamePage.this, MainActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(myIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if (mGoogleApiClient != null){
+            mGoogleApiClient.disconnect();
+        }
+        mGoogleApiClient = null;
+
+    }
 }
