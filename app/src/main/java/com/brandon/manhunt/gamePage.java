@@ -489,7 +489,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     public void onLocationChanged(Location location) {
 
 
-        if (mLastlocation != null) {
+        if (location != null) {
             if (mCurrentUserEmail.equals(mHuntedEmail)) {
                 sendHuntedLocation(location);
                 getHuntersLocation(location);

@@ -224,11 +224,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     public void updateMap(double Latitude, double Longitude){
         checkLocationPermission();
-        // TODO
 
-
-        /* This function is called every 30 seconds by another function outside this class.
-        * Write code for updating the map in here*/
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
         if (circle != null) {
@@ -246,13 +242,12 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
         circle = Gmap.addCircle(new CircleOptions()
                 .center(latLng)
-                .radius(25)
+                .radius(10)
                 .strokeColor(R.color.colorPrimaryDark));
 
 
         Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 18.50F));
     }
-
 
     public Location getLocation(){
         double lat = location.getLatitude();
@@ -263,8 +258,4 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
         return latlng;
 
     }
-
-
-
-
 }
