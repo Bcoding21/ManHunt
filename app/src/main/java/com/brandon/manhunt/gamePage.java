@@ -533,7 +533,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
-        finish();
     }
 
     private void setIsPlaying(){
