@@ -79,7 +79,7 @@ public class GamePageFragment extends Fragment {
         mDisplayField.setText(s);
     }
 
-    public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
+        public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
 
         Location myLocation = new Location("");
         myLocation.setLatitude(lattitude);
@@ -87,11 +87,10 @@ public class GamePageFragment extends Fragment {
 
         double distance = myLocation.distanceTo(huntedLocation);
 
-        if (distance < 10.00){
+        if (distance < 3.00){
             mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
             mReference.child("GAMEOVER").setValue(true);
         }
-
     }
 
     public void receiveHuntersInformation(List<Location> location, double currentLat, double currentLong){
@@ -101,23 +100,16 @@ public class GamePageFragment extends Fragment {
         currentLocation.setLongitude(currentLong);
 
             double smallestDistance = location.get(0).distanceTo(currentLocation);
-            Location closest_coordinates = new Location("");
 
             for (int i = 0; i < location.size(); i++) {
                 double testDistance = smallestDistance = location.get(i).distanceTo(currentLocation);
                 if (smallestDistance > testDistance) {
-                    closest_coordinates = location.get(i);
                     smallestDistance = testDistance;
                 }
             }
 
-            double lat = closest_coordinates.getLatitude();
-            double Long = closest_coordinates.getLongitude();
 
-            MapPageFragment.getInstance().updateMap(lat, Long);
-            
-
-            if (smallestDistance < 10.00) {
+            if (smallestDistance < 3.00) {
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
                 mReference.child("GAMEOVER").setValue(true);
             }
@@ -128,6 +120,7 @@ public class GamePageFragment extends Fragment {
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
+
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
             client.disconnect();
@@ -144,13 +137,10 @@ public class GamePageFragment extends Fragment {
             public void onFinish() {
 
                 Intent myIntent = new Intent(getActivity(), MainPage.class);
-                myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(myIntent);
 
             }
         }.start();
-
-
     }
 
     public void setSecondDisplay(String s){
