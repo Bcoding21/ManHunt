@@ -47,6 +47,7 @@
 
             <EditText
                 android:id="@+id/signin_email"
+                android:backgroundTint="#D3D3D3"
                 android:shadowColor="#000000"
                 android:shadowRadius="2"
                 android:layout_marginTop="120dp"
@@ -59,6 +60,7 @@
 
             <EditText
                 android:id="@+id/signin_password"
+                android:backgroundTint="#D3D3D3"
                 android:shadowColor="#000000"
                 android:shadowRadius="2"
                 android:layout_marginTop="50dp"

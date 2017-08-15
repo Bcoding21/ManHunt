@@ -1,20 +1,16 @@
 package com.brandon.manhunt;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -22,8 +18,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -121,6 +115,7 @@ public class GamePageFragment extends Fragment {
             double Long = closest_coordinates.getLongitude();
 
             MapPageFragment.getInstance().updateMap(lat, Long);
+            
 
             if (smallestDistance < 10.00) {
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");

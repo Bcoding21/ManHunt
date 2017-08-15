@@ -48,6 +48,7 @@
 
                 <EditText
                     android:id="@+id/display"
+                    android:backgroundTint="#D3D3D3"
                     android:shadowColor="#000000"
                     android:shadowRadius="2"
                     android:layout_width="match_parent"
@@ -56,11 +57,11 @@
                     android:hint="Enter your username"
                     android:textColor="@android:color/white"
                     android:inputType="textAutoComplete"
-                    android:layout_marginTop="80dp"
-                    />
+                    android:layout_marginTop="80dp"/>
 
                 <EditText
                     android:id="@+id/email"
+                    android:backgroundTint="#C0C0C0"
                     android:shadowColor="#000000"
                     android:shadowRadius="2"
                     android:layout_width="match_parent"
@@ -73,6 +74,7 @@
 
                 <EditText
                     android:id="@+id/password"
+                    android:backgroundTint="#808080"
                     android:shadowColor="#000000"
                     android:shadowRadius="2"
                     android:layout_width="match_parent"
