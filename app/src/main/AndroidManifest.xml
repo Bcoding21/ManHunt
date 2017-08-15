@@ -35,6 +35,7 @@
         <activity
             android:name=".gamePage"
             android:label="@string/title_activity_game_page"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <meta-data
