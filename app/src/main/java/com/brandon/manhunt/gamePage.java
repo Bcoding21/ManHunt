@@ -581,8 +581,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onResume() {
+        super.onResume();
         startSession();
     }
 
