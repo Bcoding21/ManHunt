@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brandon.manhunt.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -264,7 +265,7 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-
-
-
+    public void displayHuntedCaughtMessage(){
+        Toast.makeText(getActivity(), "Hunted has been caught! Game will end soon!", Toast.LENGTH_LONG).show();
+    }
 }
