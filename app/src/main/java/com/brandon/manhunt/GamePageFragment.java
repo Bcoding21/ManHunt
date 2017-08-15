@@ -84,35 +84,15 @@ public class GamePageFragment extends Fragment {
 
     public void receiveHuntedLocation(Location huntedLocation, Location hunterLocation){
 
-        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meters
-        String messageToHunter = null;
+        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meter
 
-        if (distanceFromHunted > 1.00){
-            messageToHunter = "Hunter has not caught you";
-        }
-        else{
-            messageToHunter = "Hunter will catch you";
-        }
-
-        mDisplayField.setText(messageToHunter);
     }
 
     public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
         if (huntersLocations.size() > 0) {
 
             double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
-            String messageToHunted = null;
 
-            if (shortestDistanceFromHunted > 1.00){
-                messageToHunted = "Hunter is not near";
-            }
-
-            else {
-                messageToHunted = "You have been caught!";
-                //mReference.child("GAMEOVER").setValue(true);
-            }
-
-            mDisplayField.setText(messageToHunted);
         }
     }
 

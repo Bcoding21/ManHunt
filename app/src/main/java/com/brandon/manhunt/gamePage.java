@@ -31,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class gamePage extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -312,20 +313,24 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         });
     }
 
-    private void getHuntedHintLocation(){
+    private void getHuntedHintLocation(final Location huntedLocation){
         mReference.child("Hunted").child("hintLocation").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     double lat = dataSnapshot.child("lat").getValue(Double.class);
                     double Long = dataSnapshot.child("long").getValue(Double.class);
+                    Location hunterLocation = new Location("");
+                    hunterLocation.setLatitude(lat);
+                    hunterLocation.setLongitude(Long);
+                    double distanceFromHunted = huntedLocation.distanceTo(hunterLocation);
 
-                    String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long;
+                    String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long +
+                            "\n Distance: " + distanceFromHunted;
                     mSectionsPagerAdapter.getGamePageFragment().getInformation(s);
                     mSectionsPagerAdapter.getMapPageFragment().updateMap(lat, Long);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -362,43 +367,23 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     Iterator<DataSnapshot> snap = children.iterator();
                     List<Location> locations = new ArrayList<Location>();
-
                     while (snap.hasNext()) {
-                        DataSnapshot d = snap.next();
-
-                        if (d.child("hintLocation").child("lat").exists() && d.child("hintLocation").child("long").exists()) {
-                            double latitude = d.child("hintLocation").child("lat").getValue(Double.class);
-                            double longitude = d.child("hintLocation").child("long").getValue(Double.class);
-
-                            Location l = new Location("");
-                            l.setLatitude(latitude);
-                            l.setLongitude(longitude);
-
-                            locations.add(l);
-                        }
-                    }
-
-                    if (locations.size() > 0) {
-
-                        double smallestDistance = locations.get(0).distanceTo(myLocation);
-                        Location coordinates = new Location("");
-
-                        for (int i = 0; i < locations.size(); i++) {
-
-                            if (locations.get(i).distanceTo(myLocation) < smallestDistance) {
-                                smallestDistance = locations.get(i).distanceTo(myLocation);
-                                coordinates = locations.get(i);
+                        DataSnapshot data = snap.next();
+                        if (data.exists()) {
+                            DataSnapshot data2 = data.child("hintLocation");
+                            if (data2.getValue() != null) {
+                                double Lat = data2.child("lat").getValue(Double.class);
+                                double Long = data2.child("long").getValue(Double.class);
+                                Location location = new Location("");
+                                location.setLatitude(Lat);
+                                location.setLongitude(Long);
+                                locations.add(location);
                             }
                         }
-
-                        double latitude = coordinates.getLatitude();
-                        double longitude = coordinates.getLongitude();
-                        String hintToHuntersLocation = "Closest hunter coordinates\nLat: " + latitude +
-                                "\nLong: " + longitude + "\n Distance: " + smallestDistance;
-                        mSectionsPagerAdapter.getGamePageFragment().getInformation(hintToHuntersLocation);
-                        mSectionsPagerAdapter.getMapPageFragment().updateMap(latitude, longitude);
-
                     }
+
+                    //mSectionsPagerAdapter.getMapPageFragment().updateHuntedMap(locations);
+
                 }
             }
 
@@ -500,7 +485,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             } else {
                 sendHuntersLocation(location);
                 getHuntedLocation(location);
-                getHuntedHintLocation();
+                getHuntedHintLocation(location);
             }
         }
     }
