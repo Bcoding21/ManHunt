@@ -87,14 +87,11 @@ public class GamePageFragment extends Fragment {
         double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meters
         String messageToHunter = null;
 
-        if (distanceFromHunted >= 20.00){
-            messageToHunter = "You are far away";
+        if (distanceFromHunted > 1.00){
+            messageToHunter = "Hunter has not caught you";
         }
-        else if (distanceFromHunted < 20.00 && distanceFromHunted >= 10.00){
-            messageToHunter = "You are getting closer!";
-        }
-        else if (distanceFromHunted < 10.00 && distanceFromHunted >= 5.00){
-            messageToHunter = "Can you see 'em yet?";
+        else{
+            messageToHunter = "Hunter will catch you";
         }
 
         mDisplayField.setText(messageToHunter);
@@ -106,19 +103,11 @@ public class GamePageFragment extends Fragment {
             double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
             String messageToHunted = null;
 
-            if (shortestDistanceFromHunted >= 20.00){
-                messageToHunted = "Hunters are far away";
+            if (shortestDistanceFromHunted > 1.00){
+                messageToHunted = "Hunter is not near";
             }
 
-            else if (shortestDistanceFromHunted < 20.00 && shortestDistanceFromHunted >= 10.00){
-                messageToHunted = "They are getting closer!";
-            }
-
-            else if (shortestDistanceFromHunted < 10.00 && shortestDistanceFromHunted >= 5.00){
-                messageToHunted = "Can you see them yet?";
-            }
-
-            else if (shortestDistanceFromHunted < 3.00) {
+            else {
                 messageToHunted = "You have been caught!";
                 mReference.child("GAMEOVER").setValue(true);
             }
