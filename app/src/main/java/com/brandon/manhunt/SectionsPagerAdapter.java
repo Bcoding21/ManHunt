@@ -17,6 +17,9 @@ public class SectionsPagerAdapter extends android.support.v4.app.FragmentPagerAd
 
     private final byte NUMBER_OF_TABS = 3;
 
+    private GamePageFragment mGamePageFragment;
+    private MapPageFragment mMapPageFragment;
+    private QuitPageFragment mQuitPageFragment;
 
     public SectionsPagerAdapter(FragmentManager manager) {
         super(manager);
@@ -27,11 +30,19 @@ public class SectionsPagerAdapter extends android.support.v4.app.FragmentPagerAd
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return GamePageFragment.getInstance();
+                GamePageFragment game = new GamePageFragment();
+                mGamePageFragment = game;
+                return game;
+
             case 1:
-                return MapPageFragment.getInstance();
+                MapPageFragment map = new MapPageFragment();
+                mMapPageFragment = map;
+                return map;
+
             case 2:
-                return QuitPageFragment.getInstance();
+                QuitPageFragment quit = new QuitPageFragment();
+                mQuitPageFragment = quit;
+                return quit;
         }
         return null;
     }
@@ -54,7 +65,16 @@ public class SectionsPagerAdapter extends android.support.v4.app.FragmentPagerAd
         return null;
     }
 
+    public GamePageFragment getGamePageFragment() {
+        return mGamePageFragment;
+    }
 
+    public MapPageFragment getMapPageFragment() {
+        return mMapPageFragment;
+    }
 
+    public QuitPageFragment getQuitPageFragment() {
+        return mQuitPageFragment;
+    }
 }
 
