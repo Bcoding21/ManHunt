@@ -109,7 +109,7 @@ public class GamePageFragment extends Fragment {
 
             else {
                 messageToHunted = "You have been caught!";
-                mReference.child("GAMEOVER").setValue(true);
+                //mReference.child("GAMEOVER").setValue(true);
             }
 
             mDisplayField.setText(messageToHunted);
