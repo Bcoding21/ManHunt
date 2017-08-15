@@ -1,8 +1,5 @@
 package com.brandon.manhunt;
 
-
-import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -85,68 +82,64 @@ public class GamePageFragment extends Fragment {
         mDisplayField.setText(s);
     }
 
-        public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
+    public void receiveHuntedLocation(Location huntedLocation, Location hunterLocation){
 
-        Location myLocation = new Location("");
-        myLocation.setLatitude(lattitude);
-        myLocation.setLongitude(longtidue);
+        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meters
+        String messageToHunter = null;
 
-        double distance = myLocation.distanceTo(huntedLocation);
-
-        if (distance < 3.00){
-            mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
-            mReference.child("GAMEOVER").setValue(true);
+        if (distanceFromHunted >= 20.00){
+            messageToHunter = "You are far away";
         }
+        else if (distanceFromHunted < 20.00 && distanceFromHunted >= 10.00){
+            messageToHunter = "You are getting closer!";
+        }
+        else if (distanceFromHunted < 10.00 && distanceFromHunted >= 5.00){
+            messageToHunter = "Can you see 'em yet?";
+        }
+
+        mDisplayField.setText(messageToHunter);
     }
 
-    public void receiveHuntersInformation(List<Location> location, double currentLat, double currentLong){
-        if (location.size() > 0) {
-        Location currentLocation = new Location("");
-        currentLocation.setLatitude(currentLat);
-        currentLocation.setLongitude(currentLong);
+    public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
+        if (huntersLocations.size() > 0) {
 
-            double smallestDistance = location.get(0).distanceTo(currentLocation);
+            double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
+            String messageToHunted = null;
 
-            for (int i = 0; i < location.size(); i++) {
-                double testDistance = smallestDistance = location.get(i).distanceTo(currentLocation);
-                if (smallestDistance > testDistance) {
-                    smallestDistance = testDistance;
-                }
+            if (shortestDistanceFromHunted >= 20.00){
+                messageToHunted = "Hunters are far away";
             }
 
-            if (smallestDistance < 3.00) {
-                mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
+            else if (shortestDistanceFromHunted < 20.00 && shortestDistanceFromHunted >= 10.00){
+                messageToHunted = "They are getting closer!";
+            }
+
+            else if (shortestDistanceFromHunted < 10.00 && shortestDistanceFromHunted >= 5.00){
+                messageToHunted = "Can you see them yet?";
+            }
+
+            else if (shortestDistanceFromHunted < 3.00) {
+                messageToHunted = "You have been caught!";
                 mReference.child("GAMEOVER").setValue(true);
             }
+
+            mDisplayField.setText(messageToHunted);
         }
     }
 
-    public void setGameOver(final GoogleApiClient client, final LocationListener listener){
-        mReference.child("Hunted").setValue(null);
-        mReference.child("Hunters").setValue(null);
-        mReference.child("GAMEOVER").setValue(false);
+    private double getShortestDistance(List<Location> huntersLocations, Location huntedLocation){
+        double shortestDistance = huntersLocations.get(0).distanceTo(huntedLocation);
 
-        if (client.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
-            client.disconnect();
+        for (int i = 0; i < huntersLocations.size(); i++) {
+            double someDistance = huntersLocations.get(0).distanceTo(huntedLocation);
+            if (someDistance < shortestDistance) {
+                shortestDistance = someDistance;
+            }
         }
-
-        new CountDownTimer(10000, 1000){
-
-            @Override
-            public void onTick(long l) {
-                mGameOverDisplay.setText("GAME OVER. LEAVING IN " + l / 1000 + " seconds");
-            }
-
-            @Override
-            public void onFinish() {
-
-                Intent myIntent = new Intent(getActivity(), MainPage.class);
-                startActivity(myIntent);
-
-            }
-        }.start();
+        return  shortestDistance;
     }
+
+
 
     public void setSecondDisplay(String s){
         mHuntersLocationField.setText(s);
