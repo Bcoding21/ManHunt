@@ -63,7 +63,7 @@ public class GamePageFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), MainActivity.class);
+                Intent i = new Intent(getActivity(), GamePageFragment.class);
                 startActivity(i);
             }
         });
