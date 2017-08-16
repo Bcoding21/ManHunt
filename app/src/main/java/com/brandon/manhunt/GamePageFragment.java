@@ -98,18 +98,25 @@ public class GamePageFragment extends Fragment {
         MediaPlayer farPlayer = MediaPlayer.create(getContext(), R.raw.far_hunter);
         MediaPlayer closePlayer = MediaPlayer.create(getContext(), R.raw.close_hunter);
         MediaPlayer closestPlayer = MediaPlayer.create(getContext(), R.raw.closest_hunter);
+        closePlayer.start();
+        closestPlayer.start();
+        farPlayer.start();
+        closePlayer.pause();
+        closestPlayer.pause();
+        farPlayer.pause();
 
-        farPlayer.prepareAsync();
+
+        /*farPlayer.prepareAsync();
         closePlayer.prepareAsync();
-        closestPlayer.prepareAsync();
-
-        if (distance > 20.00) {
+        closestPlayer.prepareAsync();*/
+//distances = > 20.00, 20.00 < 8.00, 8.00 < 3.00
+        if (distance > 10.00 && !farPlayer.isPlaying()) {
             if (closePlayer.isPlaying()) {
                 closePlayer.pause();
             }
             farPlayer.start();
             farPlayer.setLooping(true);
-        } else if (distance <= 20.00 && distance > 8.00) {
+        } else if (distance <= 10.00 && distance > 5.00 && !closePlayer.isPlaying()) {
             if (farPlayer.isPlaying()) {
                 farPlayer.pause();
             } else if (closestPlayer.isPlaying()) {
@@ -117,10 +124,13 @@ public class GamePageFragment extends Fragment {
             }
             closePlayer.start();
             closePlayer.setLooping(true);
-        } else if (distance <= 8.00 && distance >= 3.00) {
+        } else if (distance <= 5.00 && distance >= 2.00 && !closestPlayer.isPlaying()) {
+            if(closePlayer.isPlaying()) {
+                closePlayer.pause();
+            }
             closestPlayer.start();
             closestPlayer.setLooping(true);
-        } else if (distance < 3.00 && closePlayer.isPlaying()) {
+        } else if (distance < 1.00 && closePlayer.isPlaying()) {
             closestPlayer.stop();
             closePlayer.stop();
             closePlayer.release();
