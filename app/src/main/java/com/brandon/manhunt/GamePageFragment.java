@@ -1,5 +1,6 @@
 package com.brandon.manhunt;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ public class GamePageFragment extends Fragment {
     private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField, mHuntersLocationField, mGameOverDisplay;
     private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    private Button mButton;
 
     public static GamePageFragment getInstance(){
         if (mGamePageFragment == null){
@@ -55,6 +58,15 @@ public class GamePageFragment extends Fragment {
         mDisplayField = v.findViewById(R.id.display_info);
         mHuntersLocationField = v.findViewById(R.id.hunters_location);
         mGameOverDisplay = v.findViewById(R.id.game_over_display);
+
+        mButton = v.findViewById(R.id.return_to_mm);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), GamePageFragment.class);
+                startActivity(i);
+            }
+        });
 
 
        if (savedInstanceState != null){
@@ -84,35 +96,16 @@ public class GamePageFragment extends Fragment {
 
     public void receiveHuntedLocation(Location huntedLocation, Location hunterLocation){
 
-        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meters
-        String messageToHunter = null;
+        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meter
 
-        if (distanceFromHunted > 1.00){
-            messageToHunter = "Hunter has not caught you";
-        }
-        else{
-            messageToHunter = "Hunter will catch you";
-        }
-
-        mDisplayField.setText(messageToHunter);
     }
 
     public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
         if (huntersLocations.size() > 0) {
-
             double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
-            String messageToHunted = null;
 
-            if (shortestDistanceFromHunted > 1.00){
-                messageToHunted = "Hunter is not near";
-            }
 
-            else {
-                messageToHunted = "You have been caught!";
-                //mReference.child("GAMEOVER").setValue(true);
-            }
 
-            mDisplayField.setText(messageToHunted);
         }
     }
 
@@ -131,7 +124,7 @@ public class GamePageFragment extends Fragment {
 
 
     public void setSecondDisplay(String s){
-        mHuntersLocationField.setText(s);
+        mHuntersLocationField.append(s);
     }
 
 }
