@@ -3,6 +3,7 @@ package com.brandon.manhunt;
 
 import android.content.Intent;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -27,12 +28,13 @@ import java.util.List;
 
 public class GamePageFragment extends Fragment {
 
+    private MediaPlayer alert;
     private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField, mHuntersLocationField, mGameOverDisplay;
     private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
 
-    public static GamePageFragment getInstance(){
-        if (mGamePageFragment == null){
+    public static GamePageFragment getInstance() {
+        if (mGamePageFragment == null) {
             mGamePageFragment = new GamePageFragment();
         }
         return mGamePageFragment;
@@ -54,7 +56,7 @@ public class GamePageFragment extends Fragment {
         mGameOverDisplay = v.findViewById(R.id.game_over_display);
 
 
-       if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             String display = savedInstanceState.getString("display");
             String display2 = savedInstanceState.getString("display2");
             mDisplayField.setText(display);
@@ -75,11 +77,11 @@ public class GamePageFragment extends Fragment {
     }
 
 
-    public void getInformation(String s){
+    public void getInformation(String s) {
         mDisplayField.setText(s);
     }
 
-        public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue){
+    public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue) {
 
         Location myLocation = new Location("");
         myLocation.setLatitude(lattitude);
@@ -87,17 +89,47 @@ public class GamePageFragment extends Fragment {
 
         double distance = myLocation.distanceTo(huntedLocation);
 
-        if (distance < 3.00){
+        MediaPlayer farPlayer = MediaPlayer.create(getContext(), R.raw.far_hunter);
+        MediaPlayer closePlayer = MediaPlayer.create(getContext(), R.raw.close_hunter);
+        MediaPlayer closestPlayer = MediaPlayer.create(getContext(), R.raw.closest_hunter);
+
+        farPlayer.prepareAsync();
+        closePlayer.prepareAsync();
+        closestPlayer.prepareAsync();
+
+        if (distance > 20.00) {
+            if (closePlayer.isPlaying()) {
+                closePlayer.pause();
+            }
+            farPlayer.start();
+            farPlayer.setLooping(true);
+        } else if (distance <= 20.00 && distance > 8.00) {
+            if (farPlayer.isPlaying()) {
+                farPlayer.pause();
+            } else if (closestPlayer.isPlaying()) {
+                closestPlayer.pause();
+            }
+            closePlayer.start();
+            closePlayer.setLooping(true);
+        } else if (distance <= 8.00 && distance >= 3.00) {
+            closestPlayer.start();
+            closestPlayer.setLooping(true);
+        } else if (distance < 3.00 && closePlayer.isPlaying()) {
+            closestPlayer.stop();
+            closePlayer.stop();
+            closePlayer.release();
+            closestPlayer.release();
+            farPlayer.release();
             mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
             mReference.child("GAMEOVER").setValue(true);
         }
     }
 
-    public void receiveHuntersInformation(List<Location> location, double currentLat, double currentLong){
+    public void receiveHuntersInformation(List<Location> location, double currentLat, double currentLong) {
         if (location.size() > 0) {
-        Location currentLocation = new Location("");
-        currentLocation.setLatitude(currentLat);
-        currentLocation.setLongitude(currentLong);
+            Location currentLocation = new Location("");
+            currentLocation.setLatitude(currentLat);
+            currentLocation.setLongitude(currentLong);
 
             double smallestDistance = location.get(0).distanceTo(currentLocation);
 
@@ -108,15 +140,25 @@ public class GamePageFragment extends Fragment {
                 }
             }
 
+            MediaPlayer huntedPlayer = MediaPlayer.create(getContext(), R.raw.close_hunted);
 
-            if (smallestDistance < 3.00) {
+            huntedPlayer.prepareAsync();
+
+            if (smallestDistance > 20.00 && huntedPlayer.isPlaying()) {
+                huntedPlayer.pause();
+            } else if (smallestDistance <= 20.00 && !huntedPlayer.isPlaying()) {
+                huntedPlayer.start();
+                huntedPlayer.setLooping(true);
+            } else if (smallestDistance < 3.00 && huntedPlayer.isPlaying()) {
+                huntedPlayer.stop();
+                huntedPlayer.release();
                 mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
                 mReference.child("GAMEOVER").setValue(true);
             }
         }
     }
 
-    public void setGameOver(final GoogleApiClient client, final LocationListener listener){
+    public void setGameOver(final GoogleApiClient client, final LocationListener listener) {
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
@@ -126,7 +168,7 @@ public class GamePageFragment extends Fragment {
             client.disconnect();
         }
 
-        new CountDownTimer(10000, 1000){
+        new CountDownTimer(10000, 1000) {
 
             @Override
             public void onTick(long l) {
@@ -143,7 +185,7 @@ public class GamePageFragment extends Fragment {
         }.start();
     }
 
-    public void setSecondDisplay(String s){
+    public void setSecondDisplay(String s) {
         mHuntersLocationField.setText(s);
     }
 
