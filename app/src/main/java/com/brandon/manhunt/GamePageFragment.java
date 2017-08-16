@@ -102,8 +102,9 @@ public class GamePageFragment extends Fragment {
 
     public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
         if (huntersLocations.size() > 0) {
-
             double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
+
+
 
         }
     }

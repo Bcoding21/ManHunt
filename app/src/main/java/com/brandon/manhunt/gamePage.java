@@ -61,6 +61,17 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_page);
 
+        // Button
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                startActivity(new Intent(gamePage.this, MainPage.class));
+                finish();
+            }
+        });
+
         // set viewPager and tabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -324,11 +335,9 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     Location hunterLocation = new Location("");
                     hunterLocation.setLatitude(lat);
                     hunterLocation.setLongitude(Long);
-                    double distanceFromHunted = huntedLocation.distanceTo(hunterLocation);
 
-                    String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long +
-                            "\n Distance: " + distanceFromHunted;
-                    mSectionsPagerAdapter.getGamePageFragment().getInformation(s);
+                    String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long;
+                    //mSectionsPagerAdapter.getGamePageFragment().getInformation(s);
                     mSectionsPagerAdapter.getMapPageFragment().updateMap(lat, Long);
                 }
             }
@@ -367,40 +376,26 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     Iterator<DataSnapshot> snap = children.iterator();
                     List<Location> locations = new ArrayList<Location>();
-
-                    while (snap.hasNext()) {
-                        DataSnapshot data = snap.next();
-                        if (data.exists()) {
-                            DataSnapshot data2 = data.child("hintLocation");
-                            if (data2.getValue() != null) {
-                                double Lat = data2.child("lat").getValue(Double.class);
-                                double Long = data2.child("long").getValue(Double.class);
-                                Location location = new Location("");
-                                location.setLatitude(Lat);
-                                location.setLongitude(Long);
-                                locations.add(location);
-                            }
+                    DataSnapshot data = snap.next();
+                    if (data.exists()) {
+                        DataSnapshot data2 = data.child("hintLocation");
+                        if (data2.getValue() != null) {
+                            double Lat = data2.child("lat").getValue(Double.class);
+                            double Long = data2.child("long").getValue(Double.class);
+                            Location location = new Location("");
+                            location.setLatitude(Lat);
+                            location.setLongitude(Long);
+                            mSectionsPagerAdapter.getMapPageFragment().updateMap(Lat, Long);
                         }
                     }
-
-                    if (locations.size() > 0) {
-                        for (int i = 0; i < locations.size(); i++) {
-                            double lat = locations.get(i).getLatitude();
-                            double Long = locations.get(i).getLongitude();
-                            String message = "Lat: " + lat + "\nLong: " + Long + "\n";
-                            mSectionsPagerAdapter.getGamePageFragment().getInformation(message);
-                        }
-                    }
-                    //mSectionsPagerAdapter.getMapPageFragment().updateHuntedMap(locations);
-
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+
     }
 
     private void sendHuntersLocation(Location huntersLocation){
@@ -497,6 +492,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                 getHuntedHintLocation(location);
             }
         }
+
+
     }
 
     private void listenForEndGame(){
@@ -505,7 +502,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue(Boolean.class)){
                     setGameOver(mGoogleApiClient, gamePage.this);
-
                 }
             }
 
@@ -519,12 +515,14 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
     public void setGameOver(final GoogleApiClient client, final LocationListener listener){
         mButton = (Button) findViewById(R.id.return_to_mm);
+
         mSectionsPagerAdapter.getMapPageFragment().displayHuntedCaughtMessage();
 
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
             client.disconnect();
         }
+
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
