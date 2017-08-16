@@ -54,6 +54,13 @@
                     android:layout_marginTop="100dp"
                     android:textSize="30dp"
                     />
+            <Button
+            android:id="@+id/return_to_mm"
+            android:text="@string/return_to_main_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_gravity="center"/>
 
             </LinearLayout>
         </RelativeLayout>
@@ -69,5 +76,7 @@
         android:layout_marginTop="30dp"
         android:textSize="30dp"
         android:textColor="@android:color/white"/>
+
+
 
 </LinearLayout>
