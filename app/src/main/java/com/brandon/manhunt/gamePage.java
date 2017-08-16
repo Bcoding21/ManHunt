@@ -61,17 +61,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_page);
 
-        // Button
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                startActivity(new Intent(gamePage.this, MainPage.class));
-                finish();
-            }
-        });
-
         // set viewPager and tabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -330,15 +319,16 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    double lat = dataSnapshot.child("lat").getValue(Double.class);
-                    double Long = dataSnapshot.child("long").getValue(Double.class);
-                    Location hunterLocation = new Location("");
-                    hunterLocation.setLatitude(lat);
-                    hunterLocation.setLongitude(Long);
-
-                    String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long;
-                    //mSectionsPagerAdapter.getGamePageFragment().getInformation(s);
-                    mSectionsPagerAdapter.getMapPageFragment().updateMap(lat, Long);
+                    if (dataSnapshot.child("lat").getValue(Double.class) != null && dataSnapshot.child("long").getValue(Double.class) != null) {
+                        double lat = dataSnapshot.child("lat").getValue(Double.class);
+                        double Long = dataSnapshot.child("long").getValue(Double.class);
+                        Location hunterLocation = new Location("");
+                        hunterLocation.setLatitude(lat);
+                        hunterLocation.setLongitude(Long);
+                        String s = "Hunted coordinates\nLat: " + lat + "\nLong: " + Long;
+                        //mSectionsPagerAdapter.getGamePageFragment().getInformation(s);
+                        mSectionsPagerAdapter.getMapPageFragment().updateMap(lat, Long);
+                    }
                 }
             }
             @Override
@@ -514,7 +504,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
 
     public void setGameOver(final GoogleApiClient client, final LocationListener listener){
-        mButton = (Button) findViewById(R.id.return_to_mm);
 
         mSectionsPagerAdapter.getMapPageFragment().displayHuntedCaughtMessage();
 
@@ -522,12 +511,10 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
             LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
             client.disconnect();
         }
-
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
-
-        mButton.setVisibility(View.VISIBLE);
+        mSectionsPagerAdapter.getGamePageFragment().displayExitButton();
     }
 
     private void setIsPlaying(){

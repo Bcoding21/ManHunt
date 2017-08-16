@@ -78,6 +78,10 @@ public class GamePageFragment extends Fragment {
         return v;
     }
 
+    public void displayExitButton(){
+        mButton.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
