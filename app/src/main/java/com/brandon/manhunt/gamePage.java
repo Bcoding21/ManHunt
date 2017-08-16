@@ -241,7 +241,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         else{
             getHuntedInformation();
         }
-
     }
 
 
@@ -252,7 +251,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                 mHuntedEmail = dataSnapshot.child("email").getValue(String.class);
                 setHuntedName();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -367,6 +365,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     Iterator<DataSnapshot> snap = children.iterator();
                     List<Location> locations = new ArrayList<Location>();
+
                     while (snap.hasNext()) {
                         DataSnapshot data = snap.next();
                         if (data.exists()) {
@@ -382,6 +381,14 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
                         }
                     }
 
+                    if (locations.size() > 0) {
+                        for (int i = 0; i < locations.size(); i++) {
+                            double lat = locations.get(i).getLatitude();
+                            double Long = locations.get(i).getLongitude();
+                            String message = "Lat: " + lat + "\nLong: " + Long + "\n";
+                            mSectionsPagerAdapter.getGamePageFragment().getInformation(message);
+                        }
+                    }
                     //mSectionsPagerAdapter.getMapPageFragment().updateHuntedMap(locations);
 
                 }

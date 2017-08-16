@@ -111,7 +111,7 @@ public class GamePageFragment extends Fragment {
 
 
     public void setSecondDisplay(String s){
-        mHuntersLocationField.setText(s);
+        mHuntersLocationField.append(s);
     }
 
 }
