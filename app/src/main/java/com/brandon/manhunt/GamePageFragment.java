@@ -1,5 +1,9 @@
 package com.brandon.manhunt;
 
+import android.location.Location;
+import android.media.MediaPlayer;
+
+import java.util.List;
 
 import android.content.Intent;
 import android.location.Location;
@@ -11,6 +15,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +38,7 @@ public class GamePageFragment extends Fragment {
     private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField, mHuntersLocationField, mGameOverDisplay;
     private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    private Button mButton;
 
     public static GamePageFragment getInstance() {
         if (mGamePageFragment == null) {
@@ -54,6 +61,15 @@ public class GamePageFragment extends Fragment {
         mDisplayField = v.findViewById(R.id.display_info);
         mHuntersLocationField = v.findViewById(R.id.hunters_location);
         mGameOverDisplay = v.findViewById(R.id.game_over_display);
+
+        mButton = v.findViewById(R.id.return_to_mm);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), GamePageFragment.class);
+                startActivity(i);
+            }
+        });
 
 
         if (savedInstanceState != null) {
@@ -81,13 +97,9 @@ public class GamePageFragment extends Fragment {
         mDisplayField.setText(s);
     }
 
-    public void recieveHuntedLocation(Location huntedLocation, double lattitude, double longtidue) {
+    public void receiveHuntedLocation(Location huntedLocation, Location hunterLocation){
 
-        Location myLocation = new Location("");
-        myLocation.setLatitude(lattitude);
-        myLocation.setLongitude(longtidue);
-
-        double distance = myLocation.distanceTo(huntedLocation);
+        double distance = hunterLocation.distanceTo(huntedLocation); // meter
 
         MediaPlayer farPlayer = MediaPlayer.create(getContext(), R.raw.far_hunter);
         MediaPlayer closePlayer = MediaPlayer.create(getContext(), R.raw.close_hunter);
@@ -125,68 +137,27 @@ public class GamePageFragment extends Fragment {
         }
     }
 
-    public void receiveHuntersInformation(List<Location> location, double currentLat, double currentLong) {
-        if (location.size() > 0) {
-            Location currentLocation = new Location("");
-            currentLocation.setLatitude(currentLat);
-            currentLocation.setLongitude(currentLong);
+    public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
+        if (huntersLocations.size() > 0) {
+            double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
 
-            double smallestDistance = location.get(0).distanceTo(currentLocation);
-
-            for (int i = 0; i < location.size(); i++) {
-                double testDistance = smallestDistance = location.get(i).distanceTo(currentLocation);
-                if (smallestDistance > testDistance) {
-                    smallestDistance = testDistance;
-                }
-            }
-
-            MediaPlayer huntedPlayer = MediaPlayer.create(getContext(), R.raw.close_hunted);
-
-            huntedPlayer.prepareAsync();
-
-            if (smallestDistance > 20.00 && huntedPlayer.isPlaying()) {
-                huntedPlayer.pause();
-            } else if (smallestDistance <= 20.00 && !huntedPlayer.isPlaying()) {
-                huntedPlayer.start();
-                huntedPlayer.setLooping(true);
-            } else if (smallestDistance < 3.00 && huntedPlayer.isPlaying()) {
-                huntedPlayer.stop();
-                huntedPlayer.release();
-                mHuntersLocationField.setText("YOU WOULD HAVE BEEN CAUGHT!");
-                mReference.child("GAMEOVER").setValue(true);
-            }
         }
     }
 
-    public void setGameOver(final GoogleApiClient client, final LocationListener listener) {
-        mReference.child("Hunted").setValue(null);
-        mReference.child("Hunters").setValue(null);
-        mReference.child("GAMEOVER").setValue(false);
-
-        if (client.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
-            client.disconnect();
+    private double getShortestDistance(List<Location> huntersLocations, Location huntedLocation){
+        double shortestDistance = huntersLocations.get(0).distanceTo(huntedLocation);
+        for (int i = 0; i < huntersLocations.size(); i++) {
+            double someDistance = huntersLocations.get(0).distanceTo(huntedLocation);
+            if (someDistance < shortestDistance) {
+                shortestDistance = someDistance;
+            }
         }
-
-        new CountDownTimer(10000, 1000) {
-
-            @Override
-            public void onTick(long l) {
-                mGameOverDisplay.setText("GAME OVER. LEAVING IN " + l / 1000 + " seconds");
-            }
-
-            @Override
-            public void onFinish() {
-
-                Intent myIntent = new Intent(getActivity(), MainPage.class);
-                startActivity(myIntent);
-
-            }
-        }.start();
+        return  shortestDistance;
     }
 
-    public void setSecondDisplay(String s) {
-        mHuntersLocationField.setText(s);
+
+    public void setSecondDisplay(String s){
+        mHuntersLocationField.append(s);
     }
 
 }
