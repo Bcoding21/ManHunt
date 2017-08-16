@@ -39,7 +39,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.Options;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -53,6 +53,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 //import com.google.android.gms.location.LocationRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -228,9 +229,9 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
         buildGoogleApiClient();
         Gmap.setMyLocationEnabled(true);
-        if (circle != null) {
-            //mCurrLocationMarker.remove();
-            circle.remove();
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+            //circle.remove();
         }
 
         double newLat = Latitude;
@@ -240,11 +241,11 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
         LatLng latLng = new LatLng (newLat, newLong);
 
-        //mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
-        circle = Gmap.addCircle(new CircleOptions()
+        mCurrLocationMarker = Gmap.addMarker(new MarkerOptions().position(latLng));
+        /*circle = Gmap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(10)
-                .strokeColor(R.color.colorPrimaryDark));
+                .strokeColor(R.color.colorPrimaryDark));*/
 
 
         Gmap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 18.50F));
@@ -262,5 +263,9 @@ public class MapPageFragment extends Fragment implements OnMapReadyCallback,
 
     public void displayHuntedCaughtMessage(){
         Toast.makeText(getActivity(), "Hunted has been caught! Game will end soon!", Toast.LENGTH_LONG).show();
+    }
+    public void updateHuntedMap(List<Location> huntersLoc){
+
+
     }
 }
