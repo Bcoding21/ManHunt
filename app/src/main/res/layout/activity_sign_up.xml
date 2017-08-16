@@ -40,7 +40,7 @@
                     android:layout_height="101dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ManHuntLogo3"
+                    android:src="@drawable/manhuntlogo3"
                     android:layout_weight="0.14" />
 
                 <EditText
