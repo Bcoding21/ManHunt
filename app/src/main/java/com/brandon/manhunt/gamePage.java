@@ -504,6 +504,10 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
         mSectionsPagerAdapter.getMapPageFragment().displayHuntedCaughtMessage();
 
+        if (!mCurrentUserEmail.equals(mHuntedEmail)) {
+            mSectionsPagerAdapter.getGamePageFragment().setSecondDisplay("Hunter has been caught game over!");
+        }
+
         if (client.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, listener);
             client.disconnect();

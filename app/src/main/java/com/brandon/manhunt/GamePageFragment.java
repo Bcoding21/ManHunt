@@ -56,7 +56,7 @@ public class GamePageFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), GamePageFragment.class);
+                Intent i = new Intent(getActivity(), MainPage.class);
                 startActivity(i);
             }
         });
@@ -105,10 +105,6 @@ public class GamePageFragment extends Fragment {
         closestPlayer.pause();
         farPlayer.pause();
 
-
-        /*farPlayer.prepareAsync();
-        closePlayer.prepareAsync();
-        closestPlayer.prepareAsync();*/
 //distances = > 20.00, 20.00 < 8.00, 8.00 < 3.00
         if (distance > 10.00 && !farPlayer.isPlaying()) {
             if (closePlayer.isPlaying()) {
@@ -139,11 +135,18 @@ public class GamePageFragment extends Fragment {
             mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
             mReference.child("GAMEOVER").setValue(true);
         }
+
     }
 
     public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
         if (huntersLocations.size() > 0) {
-            double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
+
+            double shortestDistance = getShortestDistance(huntersLocations, huntedLocation);
+
+            if (shortestDistance < 20.00 ){
+                mDisplayField.setText("You have been caught!");
+                mReference.child("GAMEOVER").setValue(true);
+            }
 
         }
     }
@@ -156,7 +159,7 @@ public class GamePageFragment extends Fragment {
                 shortestDistance = someDistance;
             }
         }
-        return  shortestDistance;
+        return shortestDistance;
     }
 
 
