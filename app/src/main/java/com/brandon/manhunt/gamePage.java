@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +54,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     private byte mTimesTilHuntedHint;
     private boolean mFirstHint, mIsInGame;
     private boolean isCurrentlyPlaying;
+    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -341,7 +344,6 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
     private void sendHuntedLocation(Location huntedLocation) {
         double latitude = huntedLocation.getLatitude();
         double longitude = huntedLocation.getLongitude();
-
         if (mFirstHint){
             mReference.child("Hunted").child("hintLocation").child("lat").setValue(latitude);
             mReference.child("Hunted").child("hintLocation").child("long").setValue(longitude);
@@ -509,6 +511,7 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
 
 
     public void setGameOver(final GoogleApiClient client, final LocationListener listener){
+        mButton = (Button) findViewById(R.id.return_to_mm);
         mSectionsPagerAdapter.getMapPageFragment().displayHuntedCaughtMessage();
 
         if (client.isConnected()) {
@@ -518,6 +521,8 @@ public class gamePage extends AppCompatActivity implements GoogleApiClient.Conne
         mReference.child("Hunted").setValue(null);
         mReference.child("Hunters").setValue(null);
         mReference.child("GAMEOVER").setValue(false);
+
+        mButton.setVisibility(View.VISIBLE);
     }
 
     private void setIsPlaying(){
