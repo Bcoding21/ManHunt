@@ -128,12 +128,13 @@ public class GamePageFragment extends Fragment {
             closestPlayer.setLooping(true);
         } else if (distance < 1.00 && closePlayer.isPlaying()) {
             closestPlayer.stop();
-            closePlayer.stop();
+            closePlayer.reset();
             closePlayer.release();
+            closestPlayer.reset();
             closestPlayer.release();
+            farPlayer.reset();
             farPlayer.release();
-            mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
-            mReference.child("GAMEOVER").setValue(true);
+            mHuntersLocationField.setText("Do you see them yet?");
         }
 
     }
@@ -143,7 +144,19 @@ public class GamePageFragment extends Fragment {
 
             double shortestDistance = getShortestDistance(huntersLocations, huntedLocation);
 
-            if (shortestDistance < 20.00 ){
+            /*MediaPlayer huntedPlayer = MediaPlayer.create(getContext(), R.raw.close_hunted);
+            huntedPlayer.start();
+            huntedPlayer.pause();
+
+            if(shortestDistance < 10.00 && !huntedPlayer.isPlaying())
+            {
+               /* huntedPlayer.start();
+                huntedPlayer.setLooping(true);
+            }*/
+
+            if (shortestDistance < 1.00 ){
+               /* huntedPlayer.stop();
+                huntedPlayer.release();*/
                 mDisplayField.setText("You have been caught!");
                 mReference.child("GAMEOVER").setValue(true);
             }

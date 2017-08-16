@@ -24,22 +24,23 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity = "center">
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="500dp"
+                android:orientation="vertical"
+                android:weightSum="1"
+                >
 
-                <TextView
-                    android:shadowColor="#000000"
-                    android:shadowRadius="4"
+                <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Welcome to Manhunt"
-                    android:textColor="@android:color/white"
-                    android:textSize="39dp"
+                    android:layout_height="150dp"
                     android:layout_gravity="center"
-                    android:layout_margin="20dp" />
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="0.29"
+                    android:src="@drawable/ManHuntLogo3" />
 
                 <Button
                     android:id="@+id/SignIn"

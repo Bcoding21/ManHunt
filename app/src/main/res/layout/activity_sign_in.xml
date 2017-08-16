@@ -31,19 +31,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="1">
 
-            <TextView
-                android:id="@+id/display"
-                android:shadowColor="#000000"
-                android:shadowRadius="4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome to Manhunt"
-                android:textColor="@android:color/white"
-                android:textSize="34dp"
-                android:layout_marginTop="30dp"
-                android:layout_gravity="center"/>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="338dp"
+                    android:layout_height="101dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ManHuntLogo3"
+                    android:layout_weight="0.00" />
 
             <EditText
                 android:id="@+id/signin_email"
