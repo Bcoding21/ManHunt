@@ -1,11 +1,16 @@
 package com.brandon.manhunt;
 
+import android.location.Location;
+import android.media.MediaPlayer;
+
+import java.util.List;
+
 import android.content.Intent;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -21,8 +25,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -32,13 +34,14 @@ import java.util.List;
 
 public class GamePageFragment extends Fragment {
 
+    private MediaPlayer alert;
     private static GamePageFragment mGamePageFragment;
     private TextView mDisplayField, mHuntersLocationField, mGameOverDisplay;
     private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     private Button mButton;
 
-    public static GamePageFragment getInstance(){
-        if (mGamePageFragment == null){
+    public static GamePageFragment getInstance() {
+        if (mGamePageFragment == null) {
             mGamePageFragment = new GamePageFragment();
         }
         return mGamePageFragment;
@@ -69,7 +72,7 @@ public class GamePageFragment extends Fragment {
         });
 
 
-       if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             String display = savedInstanceState.getString("display");
             String display2 = savedInstanceState.getString("display2");
             mDisplayField.setText(display);
@@ -94,28 +97,59 @@ public class GamePageFragment extends Fragment {
     }
 
 
-    public void getInformation(String s){
+    public void getInformation(String s) {
         mDisplayField.setText(s);
     }
 
     public void receiveHuntedLocation(Location huntedLocation, Location hunterLocation){
 
-        double distanceFromHunted = hunterLocation.distanceTo(huntedLocation); // meter
+        double distance = hunterLocation.distanceTo(huntedLocation); // meter
 
+        MediaPlayer farPlayer = MediaPlayer.create(getContext(), R.raw.far_hunter);
+        MediaPlayer closePlayer = MediaPlayer.create(getContext(), R.raw.close_hunter);
+        MediaPlayer closestPlayer = MediaPlayer.create(getContext(), R.raw.closest_hunter);
+
+        farPlayer.prepareAsync();
+        closePlayer.prepareAsync();
+        closestPlayer.prepareAsync();
+
+        if (distance > 20.00) {
+            if (closePlayer.isPlaying()) {
+                closePlayer.pause();
+            }
+            farPlayer.start();
+            farPlayer.setLooping(true);
+        } else if (distance <= 20.00 && distance > 8.00) {
+            if (farPlayer.isPlaying()) {
+                farPlayer.pause();
+            } else if (closestPlayer.isPlaying()) {
+                closestPlayer.pause();
+            }
+            closePlayer.start();
+            closePlayer.setLooping(true);
+        } else if (distance <= 8.00 && distance >= 3.00) {
+            closestPlayer.start();
+            closestPlayer.setLooping(true);
+        } else if (distance < 3.00 && closePlayer.isPlaying()) {
+            closestPlayer.stop();
+            closePlayer.stop();
+            closePlayer.release();
+            closestPlayer.release();
+            farPlayer.release();
+            mHuntersLocationField.setText("YOU WOULD HAVE CAUGHT HIM!");
+            mReference.child("GAMEOVER").setValue(true);
+        }
     }
 
     public void receiveHuntersLocations(List<Location> huntersLocations, Location huntedLocation){
         if (huntersLocations.size() > 0) {
             double shortestDistanceFromHunted = getShortestDistance(huntersLocations, huntedLocation);
 
-
-
         }
     }
 
     private double getShortestDistance(List<Location> huntersLocations, Location huntedLocation){
         double shortestDistance = huntersLocations.get(0).distanceTo(huntedLocation);
-
         for (int i = 0; i < huntersLocations.size(); i++) {
             double someDistance = huntersLocations.get(0).distanceTo(huntedLocation);
             if (someDistance < shortestDistance) {
@@ -124,7 +158,6 @@ public class GamePageFragment extends Fragment {
         }
         return  shortestDistance;
     }
-
 
 
     public void setSecondDisplay(String s){
